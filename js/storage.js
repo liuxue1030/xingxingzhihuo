@@ -49,7 +49,7 @@ const Storage = {
             if (this.normalizeAllDates(db)) {
                 this.saveDB(db);
             }
-            // 迁移：补齐新增的兑换奖品，并同步默认星星数/每日上限（保留用户已有的上下架设置）
+            // 迁移：补齐新增的兑换奖品，并同步默认星星数/每日上限（保留用户已有的上下架设置和自定义数值）
             if (Array.isArray(db.globalConfig.products)) {
                 let changed = false;
                 DEFAULT_PRODUCTS.forEach(dp => {
@@ -58,6 +58,8 @@ const Storage = {
                         db.globalConfig.products.push(JSON.parse(JSON.stringify(dp)));
                         changed = true;
                     } else {
+                        // 家长在家长中心手动编辑过的奖品（userCustomized=true）不再被默认值覆盖
+                        if (existing.userCustomized) return;
                         if (existing.cost !== dp.cost || existing.dailyLimit !== dp.dailyLimit || existing.intervalDays !== (dp.intervalDays || 0)) {
                             existing.cost = dp.cost;
                             existing.dailyLimit = dp.dailyLimit;

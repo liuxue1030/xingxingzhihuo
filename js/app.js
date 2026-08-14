@@ -5529,7 +5529,8 @@ const App = {
                 icon: '',
                 dailyLimit: parseInt(document.getElementById('newProductLimit').value),
                 intervalDays: parseInt(document.getElementById('newProductInterval').value) || 0,
-                active: true
+                active: true,
+                userCustomized: true
             });
             Storage.saveProducts(products);
             this.closeModal();
@@ -5568,7 +5569,8 @@ const App = {
                 icon: '',
                 dailyLimit: parseInt(document.getElementById('editProductLimit').value),
                 intervalDays: parseInt(document.getElementById('editProductInterval').value) || 0,
-                active: p.active
+                active: p.active,
+                userCustomized: true
             };
             Storage.saveProducts(products);
             this.closeModal();
