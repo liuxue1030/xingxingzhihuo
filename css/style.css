@@ -3862,7 +3862,11 @@ input[type="file"] {
 /* ===== 专注力训练 ===== */
 .focus-total{color:#666;font-size:13px;text-align:center;margin:-6px 0 16px;}
 .focus-total strong{color:#a18cd1;font-size:15px;font-weight:800;margin:0 2px;}
+.focus-search{position:sticky;top:0;z-index:30;margin:2px 0 14px;padding:6px 0;background:var(--bg);box-shadow:0 4px 10px -6px rgba(0,0,0,.18);}
+.focus-search-input{width:100%;box-sizing:border-box;padding:10px 16px;border:1px solid #e0d4f5;border-radius:999px;font-size:14px;outline:none;background:#fff;color:#444;}
+.focus-search-input:focus{border-color:#a18cd1;box-shadow:0 0 0 3px rgba(161,140,209,.18);}
 .focus-list{display:flex;flex-direction:column;gap:12px;}
+.focus-empty{color:#999;font-size:14px;text-align:center;padding:30px 0;}
 .focus-card{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 3px 12px rgba(0,0,0,.05);cursor:pointer;}
 .focus-card:active{background:#f9f9ff;}
 .focus-card-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#a18cd1,#fbc2eb);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;}

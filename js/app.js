@@ -2119,19 +2119,37 @@ const App = {
         const items = window.FOCUS_TRAINING || [];
         let html = `<h1 class="page-title">🧘 专注力训练</h1>
             <div class="focus-total">共 <strong>${items.length}</strong> 篇</div>
-            <div class="focus-list">`;
+            <div class="focus-search"><input type="search" id="focusSearch" class="focus-search-input" placeholder="🔍 搜索故事名称…" autocomplete="off"></div>
+            <div class="focus-list" id="focusGrid"></div>`;
 
-        items.forEach((it, idx) => {
-            html += `<div class="focus-card" data-index="${idx}">
-                <span class="focus-card-num">${idx + 1}</span>
-                <span class="focus-card-title">${this.esc(it.title)}</span>
-            </div>`;
-        });
-
-        html += `</div>`;
         document.getElementById('main-content').innerHTML = html;
 
-        document.querySelectorAll('.focus-card').forEach(card => {
+        const inp = document.getElementById('focusSearch');
+        if (inp) inp.addEventListener('input', e => this._renderFocusGrid(e.target.value));
+        this._renderFocusGrid('');
+    },
+
+    // 根据关键词实时过滤专注力故事列表
+    _renderFocusGrid(keyword) {
+        const items = window.FOCUS_TRAINING || [];
+        const grid = document.getElementById('focusGrid');
+        if (!grid) return;
+        const kw = (keyword || '').trim().toLowerCase();
+        const filtered = kw
+            ? items.filter(it => (it.title || '').toLowerCase().includes(kw))
+            : items;
+        if (!filtered.length) {
+            grid.innerHTML = `<div class="focus-empty">🔍 没有找到与「${this.esc(keyword)}」相关的故事</div>`;
+            return;
+        }
+        grid.innerHTML = filtered.map(it => {
+            const origIdx = items.indexOf(it);
+            return `<div class="focus-card" data-index="${origIdx}">
+                <span class="focus-card-num">${origIdx + 1}</span>
+                <span class="focus-card-title">${this.esc(it.title)}</span>
+            </div>`;
+        }).join('');
+        grid.querySelectorAll('.focus-card').forEach(card => {
             card.addEventListener('click', () => {
                 const idx = +card.dataset.index;
                 const item = items[idx];
