@@ -1297,10 +1297,10 @@ const DEFAULT_REWARD_RULES = {
 
 // ===== 默认商城商品 =====
 const DEFAULT_PRODUCTS = [
-    { name: "看动画片30分钟", cost: 5, icon: "", dailyLimit: 1, intervalDays: 0, active: true },
-    { name: "听故事30分钟", cost: 5, icon: "", dailyLimit: 1, intervalDays: 0, active: true },
-    { name: "雪糕一个", cost: 5, icon: "", dailyLimit: 1, intervalDays: 0, active: true },
-    { name: "玩具一个", cost: 50, icon: "", dailyLimit: 1, intervalDays: 0, active: true },
+    { name: "看动画片30分钟", cost: 5, icon: "", dailyLimit: 2, intervalDays: 0, active: true },
+    { name: "听故事30分钟", cost: 5, icon: "", dailyLimit: 4, intervalDays: 0, active: true },
+    { name: "雪糕一个", cost: 5, icon: "", dailyLimit: 1, intervalDays: 2, active: true },
+    { name: "玩具一个", cost: 80, icon: "", dailyLimit: 1, intervalDays: 0, active: true },
     { name: "买零食（20元以内）", cost: 30, icon: "", dailyLimit: 1, intervalDays: 0, active: true },
     { name: "买零食（50元以内）", cost: 60, icon: "", dailyLimit: 1, intervalDays: 0, active: true },
     { name: "在外面吃饭", cost: 80, icon: "", dailyLimit: 1, intervalDays: 0, active: true },

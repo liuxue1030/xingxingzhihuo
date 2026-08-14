@@ -58,12 +58,9 @@ const Storage = {
                         db.globalConfig.products.push(JSON.parse(JSON.stringify(dp)));
                         changed = true;
                     } else {
-                        if (existing.cost !== dp.cost || existing.dailyLimit !== dp.dailyLimit) {
+                        if (existing.cost !== dp.cost || existing.dailyLimit !== dp.dailyLimit || existing.intervalDays !== (dp.intervalDays || 0)) {
                             existing.cost = dp.cost;
                             existing.dailyLimit = dp.dailyLimit;
-                            changed = true;
-                        }
-                        if (typeof existing.intervalDays !== 'number') {
                             existing.intervalDays = dp.intervalDays || 0;
                             changed = true;
                         }
