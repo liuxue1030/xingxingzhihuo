@@ -3861,6 +3861,8 @@ input[type="file"] {
 
 /* ===== 专注力训练 ===== */
 .focus-subtitle{color:#888;font-size:13px;margin:-6px 0 16px;text-align:center;}
+.focus-total{color:#666;font-size:13px;text-align:center;margin:-8px 0 16px;}
+.focus-total strong{color:#a18cd1;font-size:15px;font-weight:800;margin:0 2px;}
 .focus-list{display:flex;flex-direction:column;gap:12px;}
 .focus-card{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 3px 12px rgba(0,0,0,.05);cursor:pointer;}
 .focus-card:active{background:#f9f9ff;}

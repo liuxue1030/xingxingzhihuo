@@ -2119,13 +2119,13 @@ const App = {
         const items = window.FOCUS_TRAINING || [];
         let html = `<h1 class="page-title">🧘 专注力训练</h1>
             <p class="focus-subtitle">阅读小故事，回答思考题，放飞发散思维</p>
+            <div class="focus-total">共 <strong>${items.length}</strong> 篇</div>
             <div class="focus-list">`;
 
         items.forEach((it, idx) => {
             html += `<div class="focus-card" data-index="${idx}">
                 <span class="focus-card-num">${idx + 1}</span>
                 <span class="focus-card-title">${this.esc(it.title)}</span>
-                <span class="focus-card-arrow">▶</span>
             </div>`;
         });
 
