@@ -2118,7 +2118,6 @@ const App = {
     renderFocusTrainingHome() {
         const items = window.FOCUS_TRAINING || [];
         let html = `<h1 class="page-title">🧘 专注力训练</h1>
-            <p class="focus-subtitle">阅读小故事，回答思考题，放飞发散思维</p>
             <div class="focus-total">共 <strong>${items.length}</strong> 篇</div>
             <div class="focus-list">`;
 
