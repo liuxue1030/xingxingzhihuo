@@ -2159,12 +2159,33 @@ const App = {
     },
 
     // ========================================================
-    // 世界上下五千年（蜻蜓FM 频道 152754，326 集有声历史）
+    // 蜻蜓FM 有声历史（世界上下五千年 cid=152754 / 中华上下五千年 cid=48592）
     // 音频地址运行时动态生成（qtfm redirect + 签名），列表不存静态链接
     // ========================================================
     renderWorldHistoryHome() {
-        const items = window.WORLD_HISTORY || [];
-        let html = `<h1 class="page-title">🌍 世界上下五千年</h1>
+        this.renderQtfmHistory({
+            title: '世界上下五千年',
+            icon: '🌍',
+            cid: 152754,
+            listKey: 'WORLD_HISTORY',
+            placeholder: '🔍 搜索集数/标题…'
+        });
+    },
+
+    renderChinaHistoryHome() {
+        this.renderQtfmHistory({
+            title: '中华上下五千年',
+            icon: '🏛️',
+            cid: 48592,
+            listKey: 'CHINA_HISTORY',
+            placeholder: '🔍 搜索集数/标题…'
+        });
+    },
+
+    renderQtfmHistory(opts) {
+        const items = window[opts.listKey] || [];
+        this._whState = { opts, items, cid: opts.cid };
+        let html = `<h1 class="page-title">${opts.icon} ${opts.title}</h1>
             <p class="wh-sub">共 <b>${items.length}</b> 集 · 点击任意一集播放，播完自动连播下一集</p>
             <div class="wh-now" id="whNow" style="display:none;">
                 <div class="wh-now-info">
@@ -2173,7 +2194,7 @@ const App = {
                 </div>
                 <button class="wh-now-stop" id="whStop">⏹ 停止</button>
             </div>
-            <div class="wh-search"><input type="search" id="whSearch" class="wh-search-input" placeholder="🔍 搜索集数/标题…" autocomplete="off"></div>
+            <div class="wh-search"><input type="search" id="whSearch" class="wh-search-input" placeholder="${opts.placeholder}" autocomplete="off"></div>
             <div class="wh-list" id="whList"></div>`;
 
         document.getElementById('main-content').innerHTML = html;
@@ -2192,7 +2213,8 @@ const App = {
     },
 
     _renderWhGrid(keyword) {
-        const items = window.WORLD_HISTORY || [];
+        const state = this._whState || { items: [] };
+        const items = state.items;
         const grid = document.getElementById('whList');
         if (!grid) return;
         const kw = (keyword || '').trim().toLowerCase();
@@ -2227,12 +2249,13 @@ const App = {
     },
 
     _whPlay(idx) {
-        const items = window.WORLD_HISTORY || [];
+        const state = this._whState || { items: [], cid: 152754 };
+        const items = state.items;
         if (!items[idx]) return;
         this._whCurrentIdx = idx;
         const item = items[idx];
         const au = this._whAudio || (this._whAudio = new Audio());
-        try { au.src = this._qtfmAudioUrlC(152754, item.id); } catch (e) {}
+        try { au.src = this._qtfmAudioUrlC(state.cid, item.id); } catch (e) {}
         au.play().catch(() => {});
         au.onended = () => {
             this._whSyncNowBar();
@@ -2252,7 +2275,8 @@ const App = {
     },
 
     _whSyncNowBar() {
-        const items = window.WORLD_HISTORY || [];
+        const state = this._whState || { items: [] };
+        const items = state.items;
         const idx = this._whCurrentIdx;
         const bar = document.getElementById('whNow');
         const titleEl = document.getElementById('whNowTitle');
@@ -2266,7 +2290,8 @@ const App = {
     },
 
     _whHighlightCurrent() {
-        const items = window.WORLD_HISTORY || [];
+        const state = this._whState || { items: [] };
+        const items = state.items;
         const cur = this._whCurrentIdx;
         document.querySelectorAll('.wh-item').forEach(card => {
             const idx = +card.dataset.index;
@@ -2376,6 +2401,7 @@ const App = {
             { id: 'qaBaike', icon: '💡', name: '问答百科' },
             { id: 'history', icon: '🏯', name: '中华历史科普' },
             { id: 'worldHistory', icon: '🌍', name: '世界上下五千年' },
+            { id: 'chinaHistory', icon: '🏛️', name: '中华上下五千年' },
             { id: 'errorBook', icon: '📝', name: '错题本' }
         ];
 
@@ -2407,6 +2433,7 @@ const App = {
                     case 'idioms': this.navigateSub(() => this.renderIdiomsHome()); break;
                     case 'history': this.renderHistoryHome(); break;
                     case 'worldHistory': this.navigateSub(() => this.renderWorldHistoryHome()); break;
+                    case 'chinaHistory': this.navigateSub(() => this.renderChinaHistoryHome()); break;
                     case 'engTextbook': this.renderEngTextbook(); break;
                     case 'focus': this.navigateSub(() => this.renderFocusTrainingHome()); break;
                     case 'songs': this.navigateSub(() => this.renderSongsHome()); break;
