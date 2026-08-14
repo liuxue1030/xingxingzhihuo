@@ -2158,6 +2158,125 @@ const App = {
         });
     },
 
+    // ========================================================
+    // 世界上下五千年（蜻蜓FM 频道 152754，326 集有声历史）
+    // 音频地址运行时动态生成（qtfm redirect + 签名），列表不存静态链接
+    // ========================================================
+    renderWorldHistoryHome() {
+        const items = window.WORLD_HISTORY || [];
+        let html = `<h1 class="page-title">🌍 世界上下五千年</h1>
+            <p class="wh-sub">共 <b>${items.length}</b> 集 · 点击任意一集播放，播完自动连播下一集</p>
+            <div class="wh-now" id="whNow" style="display:none;">
+                <div class="wh-now-info">
+                    <span class="wh-now-label">正在播放</span>
+                    <span class="wh-now-title" id="whNowTitle"></span>
+                </div>
+                <button class="wh-now-stop" id="whStop">⏹ 停止</button>
+            </div>
+            <div class="wh-search"><input type="search" id="whSearch" class="wh-search-input" placeholder="🔍 搜索集数/标题…" autocomplete="off"></div>
+            <div class="wh-list" id="whList"></div>`;
+
+        document.getElementById('main-content').innerHTML = html;
+
+        const inp = document.getElementById('whSearch');
+        if (inp) inp.addEventListener('input', e => this._renderWhGrid(e.target.value));
+        const stop = document.getElementById('whStop');
+        if (stop) stop.addEventListener('click', () => this._whStop());
+
+        this._renderWhGrid('');
+        // 若已有正在播放的音频，恢复播放状态显示
+        if (this._whAudio && !this._whAudio.paused && typeof this._whCurrentIdx === 'number') {
+            this._whSyncNowBar();
+            this._whHighlightCurrent();
+        }
+    },
+
+    _renderWhGrid(keyword) {
+        const items = window.WORLD_HISTORY || [];
+        const grid = document.getElementById('whList');
+        if (!grid) return;
+        const kw = (keyword || '').trim().toLowerCase();
+        const filtered = kw
+            ? items.filter(it => (it.title || '').toLowerCase().includes(kw))
+            : items;
+        if (!filtered.length) {
+            grid.innerHTML = `<div class="wh-empty">🔍 没有找到与「${this.esc(keyword)}」相关的节目</div>`;
+            return;
+        }
+        grid.innerHTML = filtered.map(it => {
+            const idx = items.indexOf(it);
+            const dur = this._whFmt(it.duration || 0);
+            return `<div class="wh-item" data-index="${idx}">
+                <span class="wh-item-num">${idx + 1}</span>
+                <span class="wh-item-title">${this.esc(it.title)}</span>
+                <span class="wh-item-dur">${dur}</span>
+                <span class="wh-item-play">▶</span>
+            </div>`;
+        }).join('');
+        grid.querySelectorAll('.wh-item').forEach(card => {
+            card.addEventListener('click', () => this._whPlay(+card.dataset.index));
+        });
+        this._whHighlightCurrent();
+    },
+
+    _whFmt(sec) {
+        sec = Math.max(0, Math.floor(sec || 0));
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    },
+
+    _whPlay(idx) {
+        const items = window.WORLD_HISTORY || [];
+        if (!items[idx]) return;
+        this._whCurrentIdx = idx;
+        const item = items[idx];
+        const au = this._whAudio || (this._whAudio = new Audio());
+        try { au.src = this._qtfmAudioUrlC(152754, item.id); } catch (e) {}
+        au.play().catch(() => {});
+        au.onended = () => {
+            this._whSyncNowBar();
+            this._whHighlightCurrent();
+            this._whPlay(idx + 1); // 自动连播下一集
+        };
+        this._whSyncNowBar();
+        this._whHighlightCurrent();
+    },
+
+    _whStop() {
+        if (this._whAudio) { try { this._whAudio.pause(); this._whAudio.onended = null; } catch (e) {} }
+        this._whCurrentIdx = null;
+        const bar = document.getElementById('whNow');
+        if (bar) bar.style.display = 'none';
+        this._whHighlightCurrent();
+    },
+
+    _whSyncNowBar() {
+        const items = window.WORLD_HISTORY || [];
+        const idx = this._whCurrentIdx;
+        const bar = document.getElementById('whNow');
+        const titleEl = document.getElementById('whNowTitle');
+        if (!bar) return;
+        if (typeof idx === 'number' && items[idx]) {
+            bar.style.display = 'flex';
+            if (titleEl) titleEl.textContent = items[idx].title;
+        } else {
+            bar.style.display = 'none';
+        }
+    },
+
+    _whHighlightCurrent() {
+        const items = window.WORLD_HISTORY || [];
+        const cur = this._whCurrentIdx;
+        document.querySelectorAll('.wh-item').forEach(card => {
+            const idx = +card.dataset.index;
+            const playing = (idx === cur && this._whAudio && !this._whAudio.paused);
+            card.classList.toggle('playing', !!playing);
+            const playIcon = card.querySelector('.wh-item-play');
+            if (playIcon) playIcon.textContent = playing ? '⏸' : '▶';
+        });
+    },
+
     renderFocusTrainingDetail(item, idx) {
         const items = window.FOCUS_TRAINING || [];
         const total = items.length;
@@ -2256,6 +2375,7 @@ const App = {
             { id: 'phonetics', icon: '🗣️', name: '国际音标48个' },
             { id: 'qaBaike', icon: '💡', name: '问答百科' },
             { id: 'history', icon: '🏯', name: '中华历史科普' },
+            { id: 'worldHistory', icon: '🌍', name: '世界上下五千年' },
             { id: 'errorBook', icon: '📝', name: '错题本' }
         ];
 
@@ -2286,6 +2406,7 @@ const App = {
                     case 'poems': this.navigateSub(() => this.renderPoemsHome()); break;
                     case 'idioms': this.navigateSub(() => this.renderIdiomsHome()); break;
                     case 'history': this.renderHistoryHome(); break;
+                    case 'worldHistory': this.navigateSub(() => this.renderWorldHistoryHome()); break;
                     case 'engTextbook': this.renderEngTextbook(); break;
                     case 'focus': this.navigateSub(() => this.renderFocusTrainingHome()); break;
                     case 'songs': this.navigateSub(() => this.renderSongsHome()); break;
@@ -3498,6 +3619,9 @@ const App = {
     // 统一停止所有音频（成语 HTML5 Audio / 古诗 audio 元素 / 语音合成 TTS）
     // 在每次导航、返回、切换顶层页面时调用，确保退出界面即停止播放
     _stopAllAudio() {
+        // 世界上下五千年（蜻蜓FM 连播）
+        if (this._whAudio) { try { this._whAudio.pause(); this._whAudio.onended = null; } catch (e) {} }
+        this._whCurrentIdx = null;
         // 成语音频
         if (this._idiomAudio) { try { this._idiomAudio.pause(); } catch (e) {} }
         this._idiomPlaying = null;

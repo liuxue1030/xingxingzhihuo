@@ -3867,6 +3867,28 @@ input[type="file"] {
 .focus-search-input:focus{border-color:#a18cd1;box-shadow:0 0 0 3px rgba(161,140,209,.18);}
 .focus-list{display:flex;flex-direction:column;gap:12px;}
 .focus-empty{color:#999;font-size:14px;text-align:center;padding:30px 0;}
+
+/* ===== 世界上下五千年 ===== */
+.wh-sub{color:#888;font-size:13px;text-align:center;margin:-6px 0 14px;}
+.wh-sub b{color:#4a90d9;font-size:14px;font-weight:800;margin:0 2px;}
+.wh-now{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid #cfe3f7;border-radius:14px;padding:12px 16px;margin:0 0 12px;box-shadow:0 3px 12px rgba(0,0,0,.05);}
+.wh-now-info{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.wh-now-label{font-size:11px;color:#4a90d9;font-weight:700;}
+.wh-now-title{font-size:14px;font-weight:800;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wh-now-stop{flex-shrink:0;background:#fff;border:1px solid #d8d8d8;border-radius:999px;padding:7px 16px;font-size:13px;color:#666;cursor:pointer;}
+.wh-now-stop:active{background:#f5f5f5;}
+.wh-search{position:sticky;top:0;z-index:30;margin:0 0 12px;padding:6px 0;background:var(--bg);box-shadow:0 4px 10px -6px rgba(0,0,0,.18);}
+.wh-search-input{width:100%;box-sizing:border-box;padding:10px 16px;border:1px solid #cfe3f7;border-radius:999px;font-size:14px;outline:none;background:#fff;color:#444;}
+.wh-search-input:focus{border-color:#4a90d9;box-shadow:0 0 0 3px rgba(74,144,217,.18);}
+.wh-list{display:flex;flex-direction:column;gap:10px;}
+.wh-item{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:12px 16px;box-shadow:0 3px 12px rgba(0,0,0,.05);cursor:pointer;}
+.wh-item:active{background:#f5f9ff;}
+.wh-item.playing{background:#eaf3ff;border:1px solid #4a90d9;}
+.wh-item-num{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#4a90d9,#8ec5fc);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.wh-item-title{flex:1;min-width:0;font-size:14px;font-weight:700;color:#444;line-height:1.4;}
+.wh-item-dur{flex-shrink:0;font-size:12px;color:#aaa;}
+.wh-item-play{flex-shrink:0;font-size:14px;color:#4a90d9;}
+.wh-empty{color:#999;font-size:14px;text-align:center;padding:30px 0;}
 .focus-card{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 3px 12px rgba(0,0,0,.05);cursor:pointer;}
 .focus-card:active{background:#f9f9ff;}
 .focus-card-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#a18cd1,#fbc2eb);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;}
