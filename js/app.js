@@ -2182,6 +2182,16 @@ const App = {
         });
     },
 
+    renderScienceBoostHome() {
+        this.renderQtfmHistory({
+            title: '科学充电站',
+            icon: '🔬',
+            cid: 445535,
+            listKey: 'SCIENCE_BOOST',
+            placeholder: '🔍 搜索集数/标题…'
+        });
+    },
+
     renderQtfmHistory(opts) {
         const items = window[opts.listKey] || [];
         this._whState = { opts, items, cid: opts.cid };
@@ -2402,6 +2412,7 @@ const App = {
             { id: 'history', icon: '🏯', name: '中华历史科普' },
             { id: 'worldHistory', icon: '🌍', name: '世界上下五千年' },
             { id: 'chinaHistory', icon: '🏛️', name: '中华上下五千年' },
+            { id: 'scienceBoost', icon: '🔬', name: '科学充电站' },
             { id: 'errorBook', icon: '📝', name: '错题本' }
         ];
 
@@ -2434,6 +2445,7 @@ const App = {
                     case 'history': this.renderHistoryHome(); break;
                     case 'worldHistory': this.navigateSub(() => this.renderWorldHistoryHome()); break;
                     case 'chinaHistory': this.navigateSub(() => this.renderChinaHistoryHome()); break;
+                    case 'scienceBoost': this.navigateSub(() => this.renderScienceBoostHome()); break;
                     case 'engTextbook': this.renderEngTextbook(); break;
                     case 'focus': this.navigateSub(() => this.renderFocusTrainingHome()); break;
                     case 'songs': this.navigateSub(() => this.renderSongsHome()); break;
