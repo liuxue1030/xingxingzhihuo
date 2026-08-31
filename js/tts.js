@@ -239,10 +239,10 @@ const TTS = {
         this.speakChinese('太好了，终于答对啦！');
     },
 
-    // 答错语音（柔和提醒，鼓励再试）
+    // 答错语音（简短鼓励，再试一次）
     speakWrong() {
         this.playFail();
-        this.speakChinese('没关系，再试一次哦');
+        this.speakChinese('再试一次');
     },
 
     // 锁定(录音时禁止播放)
