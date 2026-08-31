@@ -230,13 +230,13 @@ const TTS = {
     // 答对语音（成功音效 + 一句鼓励的话，带情绪）
     speakCorrect() {
         this.playSuccess();
-        this.speakChinese('答对啦，你真棒！');
+        this.speakChinese('答对了');
     },
 
     // 重试后答对语音
     speakRetryCorrect() {
         this.playSuccess();
-        this.speakChinese('太好了，终于答对啦！');
+        this.speakChinese('答对了');
     },
 
     // 答错语音（简短鼓励，再试一次）
