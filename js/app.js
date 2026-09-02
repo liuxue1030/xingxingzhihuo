@@ -4774,30 +4774,6 @@ const App = {
                     ${lesson.content.split('\n').map(line => `<p style="margin:0 0 8px 0;">${line}</p>`).join('')}
                 </div>`;
 
-            if (!isGarden && lesson.recognize) {
-                html += `
-                <div style="margin-top:20px;padding:14px;background:#E8F5E9;border-radius:10px;">
-                    <div style="font-size:14px;color:#2E7D32;font-weight:bold;margin-bottom:6px;">📌 认字表</div>
-                    <div style="font-size:16px;line-height:2;">${lesson.recognize}</div>
-                </div>`;
-            }
-
-            if (!isGarden && lesson.write) {
-                html += `
-                <div style="margin-top:12px;padding:14px;background:#FFF3E0;border-radius:10px;">
-                    <div style="font-size:14px;color:#E65100;font-weight:bold;margin-bottom:6px;">✏️ 写字表</div>
-                    <div style="font-size:16px;line-height:2;">${lesson.write}</div>
-                </div>`;
-            }
-
-            if (!isGarden && lesson.keyWords) {
-                html += `
-                <div style="margin-top:12px;padding:14px;background:#F3E5F5;border-radius:10px;">
-                    <div style="font-size:14px;color:#7B1FA2;font-weight:bold;margin-bottom:6px;">📚 词语表</div>
-                    <div style="font-size:16px;line-height:2;">${lesson.keyWords}</div>
-                </div>`;
-            }
-
             if (lesson.knowledge) {
                 html += `
                 <div style="margin-top:12px;padding:14px;background:#E3F2FD;border-radius:10px;">
