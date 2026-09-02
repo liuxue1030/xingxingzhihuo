@@ -1309,7 +1309,8 @@ const DEFAULT_PRODUCTS = [
     { name: "买零食（50元以内）", cost: 60, icon: "", dailyLimit: 1, intervalDays: 0, active: true },
     { name: "在外面吃饭", cost: 80, icon: "", dailyLimit: 1, intervalDays: 0, active: true },
     { name: "外出住酒店", cost: 200, icon: "", dailyLimit: 1, intervalDays: 0, active: true },
-    { name: "买饮料喝", cost: 10, icon: "", dailyLimit: 1, intervalDays: 0, active: true }
+    { name: "买饮料喝", cost: 10, icon: "", dailyLimit: 1, intervalDays: 0, active: true },
+    { name: "奖励10元", cost: 100, icon: "", dailyLimit: 999, intervalDays: 0, active: true }
 ];
 
 // 导出到全局

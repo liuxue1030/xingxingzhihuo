@@ -5254,7 +5254,7 @@ const App = {
                 html += `<div class="product-card ${blocked ? 'product-card-disabled' : ''}">
                     <div class="product-name">${p.name}</div>
                     <div class="product-cost">⭐ ${p.cost}</div>
-                    <div style="font-size:11px;color:#999;">今日 ${todayCount}/${p.dailyLimit}${p.intervalDays > 0 ? ' · 间隔' + p.intervalDays + '天' : ''}</div>
+                    <div style="font-size:11px;color:#999;">今日 ${todayCount}/${p.dailyLimit >= 999 ? '不限' : p.dailyLimit}${p.intervalDays > 0 ? ' · 间隔' + p.intervalDays + '天' : ''}</div>
                     ${intervalHint}
                     <button class="btn ${canExchange ? 'btn-primary' : ''} btn-block"
                         ${canExchange ? '' : 'disabled'} data-product-idx="${idx}">
