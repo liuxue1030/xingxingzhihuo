@@ -4798,6 +4798,14 @@ const App = {
                 </div>`;
             }
 
+            if (lesson.knowledge) {
+                html += `
+                <div style="margin-top:12px;padding:14px;background:#E3F2FD;border-radius:10px;">
+                    <div style="font-size:14px;color:#1565C0;font-weight:bold;margin-bottom:10px;">📝 知识积累</div>
+                    <div style="font-size:16px;line-height:2;">${lesson.knowledge}</div>
+                </div>`;
+            }
+
             html += `</div>`;
             document.getElementById('main-content').innerHTML = html;
 
