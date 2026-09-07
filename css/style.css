@@ -1567,6 +1567,23 @@ body {
     gap: 12px;
 }
 
+.textbook-banner {
+    background: linear-gradient(135deg, #FF8A65, #FF7043);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.textbook-banner:active {
+    transform: scale(0.98);
+}
+
 .unit-card {
     background: var(--card-bg);
     border-radius: var(--radius);
