@@ -4683,14 +4683,6 @@ const App = {
     renderCnTextbook() {
         this.navigateSub(() => {
             let html = `<h1 class="page-title">📕 语文课文二上</h1>
-                <a href="http://m.dzkbw.com/books/rjb/yuwen/xs2s_2025/" target="_blank" rel="noreferrer noopener" class="textbook-banner">
-                    <span style="font-size:22px;">📖</span>
-                    <span>
-                        <strong>二年级上册语文电子课本</strong>
-                        <div style="font-size:12px;opacity:.85;margin-top:2px;">点击在线查看完整教材页面</div>
-                    </span>
-                    <span style="font-size:16px;">▶</span>
-                </a>
                 <div class="unit-list">`;
 
             CHINESE_TEXTBOOK.forEach((unit, idx) => {
