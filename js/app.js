@@ -4683,14 +4683,14 @@ const App = {
     renderCnTextbook() {
         this.navigateSub(() => {
             let html = `<h1 class="page-title">📕 语文课文二上</h1>
-                <div class="textbook-banner" id="pepTextbookLink">
+                <a href="https://book.pep.com.cn/1211001201241/mobile/index.html" target="_blank" rel="noreferrer noopener" class="textbook-banner">
                     <span style="font-size:22px;">📖</span>
                     <span>
                         <strong>人教版电子课本（二上）</strong>
                         <div style="font-size:12px;opacity:.85;margin-top:2px;">点击打开原版教材，与课文同步学习</div>
                     </span>
                     <span style="font-size:16px;">▶</span>
-                </div>
+                </a>
                 <div class="unit-list">`;
 
             CHINESE_TEXTBOOK.forEach((unit, idx) => {
@@ -4706,13 +4706,6 @@ const App = {
 
             html += `</div>`;
             document.getElementById('main-content').innerHTML = html;
-
-            const pepLink = document.getElementById('pepTextbookLink');
-            if (pepLink) {
-                pepLink.addEventListener('click', () => {
-                    window.open('https://book.pep.com.cn/1211001201241/mobile/index.html', '_blank');
-                });
-            }
 
             document.querySelectorAll('.unit-card').forEach(card => {
                 card.addEventListener('click', () => {
