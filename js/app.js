@@ -638,7 +638,7 @@ const App = {
             { id: 'mathAdd', icon: '➕', name: '100以内加减法', desc: '加减法算式' },
             { id: 'engVocab', icon: '📚', name: '英语背单词', desc: '英语单词' },
             { id: 'engRead', icon: '🗣️', name: '英语短句跟读', desc: '朗读评分' },
-            { id: 'engExam', icon: '📝', name: '英语第一单元考试', desc: '沪教版二上U1' },
+            { id: 'engUnitTest', icon: '📝', name: '英语单元测试', desc: '二上 Unit 1-6' },
             { id: 'idiom', icon: '📖', name: '成语小测验', desc: '成语释义' },
             { id: 'sentenceMake', icon: '💬', name: '看词造句', desc: '每天5题，用词造句' },
             { id: 'mathMul', icon: '✖️', name: '数学乘法测试', desc: '个位数乘法' },
@@ -672,6 +672,10 @@ const App = {
                     this.navigateSub(() => this.renderSudokuHome());
                     return;
                 }
+                if (id === 'engUnitTest') {
+                    this.navigateSub(() => this.renderEngUnitTestHome());
+                    return;
+                }
                 if (card.classList.contains('disabled')) {
                     this.showToast('今日测试次数已用完，明天再来练习。');
                     return;
@@ -690,7 +694,7 @@ const App = {
             mathAdd: { name: '100以内加减法', icon: '➕', gen: () => this.genMathAddQuiz() },
             engVocab: { name: '英语背单词', icon: '📚', gen: () => this.genEngVocabQuiz() },
             engRead: { name: '英语短句跟读', icon: '🗣️', gen: () => this.genEngReadQuiz() },
-            engExam: { name: '英语第一单元考试', icon: '📝', gen: () => this.genEngExamQuiz() },
+            engExamU1: { name: '二上 Unit 1', icon: '📝', gen: () => this.genEngExamU1Quiz() },
             idiom: { name: '成语小测验', icon: '📖', gen: () => this.genIdiomQuiz() },
             sentenceMake: { name: '看词造句', icon: '💬', gen: () => this.genSentenceMakeQuiz() },
             mathMul: { name: '数学乘法测试', icon: '✖️', gen: () => this.genMathMulQuiz() },
@@ -714,7 +718,7 @@ const App = {
             answers: []
         };
 
-        this.currentQuiz.maxScore = this.currentQuiz.questions.length * 10;
+        this.currentQuiz.maxScore = this.currentQuiz.questions.reduce((sum, q) => sum + (q.points || 10), 0);
 
         this.renderQuizQuestion();
     },
@@ -827,9 +831,48 @@ const App = {
         }));
     },
 
-    genEngExamQuiz() {
+    genEngExamU1Quiz() {
         // 按原卷顺序，固定 26 题
         return [...ENGLISH_EXAM_U1].map(q => ({ ...q, inputType: q.type === 'engExamText' ? 'text' : 'choice' }));
+    },
+
+    renderEngUnitTestHome() {
+        const units = [
+            { id: 'U1', label: '二上 Unit 1', ready: true },
+            { id: 'U2', label: '二上 Unit 2', ready: false },
+            { id: 'U3', label: '二上 Unit 3', ready: false },
+            { id: 'U4', label: '二上 Unit 4', ready: false },
+            { id: 'U5', label: '二上 Unit 5', ready: false },
+            { id: 'U6', label: '二上 Unit 6', ready: false }
+        ];
+
+        let html = `<h1 class="page-title">📝 英语单元测试</h1>
+            <div class="assessment-grid">`;
+
+        units.forEach(u => {
+            html += `<div class="assessment-card ${u.ready ? '' : 'disabled'}" data-unit="${u.id}">
+                <div class="assess-icon">📝</div>
+                <div class="assess-name">${u.label}</div>
+                <div class="assess-desc">${u.ready ? '开始测试' : '暂无题目，后续补充'}</div>
+            </div>`;
+        });
+
+        html += `</div>`;
+        document.getElementById('main-content').innerHTML = html;
+
+        document.querySelectorAll('.assessment-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const unit = card.dataset.unit;
+                if (unit === 'U1') {
+                    const type = 'engExamU1';
+                    if (Storage.hasAssessedToday(null, type)) {
+                        this.showToast('今日测试次数已用完，明天再来练习。');
+                        return;
+                    }
+                    this.startAssessment(type);
+                }
+            });
+        });
     },
 
     genIdiomQuiz() {
@@ -1576,12 +1619,14 @@ const App = {
         const q = this.currentQuiz;
         const qKey = q.currentIdx;
         const retryCount = q.retries[qKey] || 0;
+        const points = question.points || 10;
+        const gained = retryCount === 0 ? points : Math.max(1, Math.floor(points / 2));
 
         if (retryCount === 0) {
-            q.score += 10;
+            q.score += gained;
             TTS.speakCorrect();
         } else {
-            q.score += 5;
+            q.score += gained;
             TTS.speakRetryCorrect();
         }
 
@@ -1595,7 +1640,7 @@ const App = {
         const feedback = document.getElementById('quizFeedback');
         if (feedback) {
             feedback.className = 'quiz-feedback correct';
-            feedback.textContent = retryCount === 0 ? '+10分' : '+5分';
+            feedback.textContent = `+${gained}分`;
         }
 
         // 禁用输入
