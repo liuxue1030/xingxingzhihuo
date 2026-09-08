@@ -96,7 +96,7 @@ const ENGLISH_EXAM_U1 = [
         type: 'engExamImg',
         points: 3,
         image: 'images/english_exam/image6.png',
-        question: '看图，判断句子是否正确。',
+        question: 'I can see with my eyes.',
         options: ['√ 正确', '× 错误'],
         answer: '√ 正确'
     },
