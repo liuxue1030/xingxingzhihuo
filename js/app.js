@@ -638,6 +638,7 @@ const App = {
             { id: 'mathAdd', icon: '➕', name: '100以内加减法', desc: '加减法算式' },
             { id: 'engVocab', icon: '📚', name: '英语背单词', desc: '一年级单词' },
             { id: 'engRead', icon: '🗣️', name: '英语短句跟读', desc: '朗读评分' },
+            { id: 'engExam', icon: '📝', name: '英语第一单元考试', desc: '沪教版二上U1' },
             { id: 'idiom', icon: '📖', name: '成语小测验', desc: '成语释义' },
             { id: 'sentenceMake', icon: '💬', name: '看词造句', desc: '每天5题，用词造句' },
             { id: 'mathMul', icon: '✖️', name: '数学乘法测试', desc: '个位数乘法' },
@@ -688,6 +689,7 @@ const App = {
             mathAdd: { name: '100以内加减法', icon: '➕', gen: () => this.genMathAddQuiz() },
             engVocab: { name: '英语背单词', icon: '📚', gen: () => this.genEngVocabQuiz() },
             engRead: { name: '英语短句跟读', icon: '🗣️', gen: () => this.genEngReadQuiz() },
+            engExam: { name: '英语第一单元考试', icon: '📝', gen: () => this.genEngExamQuiz() },
             idiom: { name: '成语小测验', icon: '📖', gen: () => this.genIdiomQuiz() },
             sentenceMake: { name: '看词造句', icon: '💬', gen: () => this.genSentenceMakeQuiz() },
             mathMul: { name: '数学乘法测试', icon: '✖️', gen: () => this.genMathMulQuiz() }
@@ -709,6 +711,8 @@ const App = {
             wrongQuestions: [],
             answers: []
         };
+
+        this.currentQuiz.maxScore = this.currentQuiz.questions.length * 10;
 
         this.renderQuizQuestion();
     },
@@ -803,6 +807,11 @@ const App = {
             answer: s.en,
             inputType: 'reading'
         }));
+    },
+
+    genEngExamQuiz() {
+        // 按原卷顺序，固定 26 题
+        return [...ENGLISH_EXAM_U1].map(q => ({ ...q, inputType: q.type === 'engExamText' ? 'text' : 'choice' }));
     },
 
     genIdiomQuiz() {
@@ -985,7 +994,56 @@ const App = {
                 };
                 document.getElementById('recordBtn').onclick = () => this.handleReading(question);
                 break;
+
+            case 'engExamImg':
+                container.innerHTML = `
+                    <div class="quiz-exam-section">${this.esc(question.section || '')}</div>
+                    <img class="quiz-exam-img" src="${question.image}" alt="题目图片" onerror="this.style.display='none'">
+                    <div class="quiz-exam-question">${this.esc(question.question)}</div>
+                    <div class="quiz-options quiz-options-abcd" id="quizOptions"></div>
+                `;
+                this.renderEngExamOptions(question);
+                break;
+
+            case 'engExamChoice':
+                container.innerHTML = `
+                    <div class="quiz-exam-section">${this.esc(question.section || '')}</div>
+                    <div class="quiz-exam-question">${this.esc(question.question).replace(/\\n/g, '<br>')}</div>
+                    <div class="quiz-options quiz-options-abcd" id="quizOptions"></div>
+                `;
+                this.renderEngExamOptions(question);
+                break;
+
+            case 'engExamText':
+                container.innerHTML = `
+                    <div class="quiz-exam-section">${this.esc(question.section || '')}</div>
+                    <div class="quiz-exam-question">${this.esc(question.question)}</div>
+                    <input type="text" class="quiz-input" id="quizInput" placeholder="填写答案" autocomplete="off" autocorrect="off" spellcheck="false">
+                    <button class="btn btn-primary btn-lg" id="quizSubmit">提交</button>
+                `;
+                document.getElementById('quizSubmit').onclick = () => this.checkEngExamTextAnswer(question);
+                document.getElementById('quizInput').onkeydown = (e) => {
+                    if (e.key === 'Enter') this.checkEngExamTextAnswer(question);
+                };
+                document.getElementById('quizInput').focus();
+                break;
         }
+    },
+
+    renderEngExamOptions(question) {
+        const container = document.getElementById('quizOptions');
+        let optHtml = '';
+        question.options.forEach((opt, i) => {
+            const label = String.fromCharCode(65 + i);
+            optHtml += `<div class="quiz-option quiz-option-abcd" data-idx="${i}"><span class="option-tag">${label}</span><span class="option-text">${this.esc(opt)}</span></div>`;
+        });
+        container.innerHTML = optHtml;
+        document.querySelectorAll('.quiz-option').forEach(el => {
+            el.addEventListener('click', () => {
+                const idx = +el.dataset.idx;
+                this.checkChoiceAnswer(question, question.options[idx], el);
+            });
+        });
     },
 
     // ===== 看词造句：渲染题目界面 =====
@@ -1467,6 +1525,22 @@ const App = {
         }
     },
 
+    checkEngExamTextAnswer(question) {
+        const input = document.getElementById('quizInput');
+        const val = input.value.trim().toLowerCase();
+        if (!val) {
+            this.showToast('请输入答案');
+            input.focus();
+            return;
+        }
+        const correct = String(question.answer || '').toLowerCase();
+        if (val === correct) {
+            this.answerCorrect(question);
+        } else {
+            this.answerWrong(question, question.answer);
+        }
+    },
+
     checkChoiceAnswer(question, selected, el) {
         if (selected === question.answer) {
             el.classList.add('correct');
@@ -1819,11 +1893,13 @@ const App = {
     showQuizResult() {
         const q = this.currentQuiz;
         this.currentQuiz = null; // 清除测评状态，结果页返回正常
+        const maxScore = q.maxScore || (q.questions.length * 10);
         const score = q.score;
+        const displayScore = Math.round(score / maxScore * 100);
         const rules = Storage.getRewardRules();
         let stars = 0;
-        if (score >= 100) stars = rules.assessment.threeStar;
-        else if (score >= 90) stars = rules.assessment.twoStar;
+        if (displayScore >= 100) stars = rules.assessment.threeStar;
+        else if (displayScore >= 90) stars = rules.assessment.twoStar;
         else stars = rules.assessment.oneStar;
 
         const correctCount = q.answers.filter(a => a.correct).length;
@@ -1833,7 +1909,7 @@ const App = {
 
         // 保存结果
         Storage.saveAssessmentResult(null, q.type, {
-            score: score,
+            score: displayScore,
             stars: stars,
             correctCount: correctCount,
             wrongCount: wrongCount,
@@ -1869,7 +1945,7 @@ const App = {
                 <div class="quiz-container">
                     <h1 class="page-title text-center">${q.icon} ${q.name} - 成绩单</h1>
                     <div class="quiz-result">
-                        <div class="result-score">${score}分</div>
+                        <div class="result-score">${displayScore}分</div>
                         <div class="result-stars">${starsStr}</div>
                         <div style="font-size:18px;margin-bottom:16px;">
                             答对 ${correctCount} 题 | 答错 ${wrongCount} 题

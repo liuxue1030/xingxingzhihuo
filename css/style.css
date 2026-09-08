@@ -941,6 +941,36 @@ body {
 .quiz-feedback.correct { color: var(--success); }
 .quiz-feedback.wrong { color: var(--danger); }
 
+/* ===== 英语考试题目 ===== */
+.quiz-exam-section {
+    font-size: 13px;
+    color: var(--text-light);
+    background: var(--primary-light);
+    padding: 4px 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+
+.quiz-exam-img {
+    max-width: 260px;
+    max-height: 220px;
+    width: auto;
+    height: auto;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    object-fit: contain;
+    background: #fff;
+}
+
+.quiz-exam-question {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.5;
+    max-width: 420px;
+    word-break: break-word;
+}
+
 /* ===== 看词造句 ===== */
 .sentence-make-prompt {
     font-size: var(--font-size-lg);
