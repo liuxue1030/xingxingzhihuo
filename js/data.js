@@ -178,6 +178,11 @@ const ENGLISH_WORDS = [
     { en: "school", zh: "学校" },
     { en: "bag", zh: "包" },
     { en: "see", zh: "看见" },
+    { en: "feel", zh: "感觉到" },
+    { en: "smell", zh: "闻到" },
+    { en: "hear", zh: "听见" },
+    { en: "taste", zh: "品尝（味道）" },
+
     { en: "draw", zh: "画画" },
     { en: "where", zh: "哪里" },
     { en: "have", zh: "有" },

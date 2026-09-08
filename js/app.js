@@ -636,12 +636,13 @@ const App = {
             { id: 'pinyin', icon: '🔤', name: '拼音测试', desc: '看词语写拼音' },
             { id: 'stroke', icon: '✍️', name: '汉字笔顺测试', desc: '看生字学笔顺' },
             { id: 'mathAdd', icon: '➕', name: '100以内加减法', desc: '加减法算式' },
-            { id: 'engVocab', icon: '📚', name: '英语背单词', desc: '一年级单词' },
+            { id: 'engVocab', icon: '📚', name: '英语背单词', desc: '英语单词' },
             { id: 'engRead', icon: '🗣️', name: '英语短句跟读', desc: '朗读评分' },
             { id: 'engExam', icon: '📝', name: '英语第一单元考试', desc: '沪教版二上U1' },
             { id: 'idiom', icon: '📖', name: '成语小测验', desc: '成语释义' },
             { id: 'sentenceMake', icon: '💬', name: '看词造句', desc: '每天5题，用词造句' },
             { id: 'mathMul', icon: '✖️', name: '数学乘法测试', desc: '个位数乘法' },
+            { id: 'mathDiv', icon: '➗', name: '数学除法测试', desc: '个位数除法' },
             { id: 'sudoku', icon: '🔢', name: '数独游戏', desc: '四宫/六宫/九宫·每日一战' }
         ];
 
@@ -692,7 +693,8 @@ const App = {
             engExam: { name: '英语第一单元考试', icon: '📝', gen: () => this.genEngExamQuiz() },
             idiom: { name: '成语小测验', icon: '📖', gen: () => this.genIdiomQuiz() },
             sentenceMake: { name: '看词造句', icon: '💬', gen: () => this.genSentenceMakeQuiz() },
-            mathMul: { name: '数学乘法测试', icon: '✖️', gen: () => this.genMathMulQuiz() }
+            mathMul: { name: '数学乘法测试', icon: '✖️', gen: () => this.genMathMulQuiz() },
+            mathDiv: { name: '数学除法测试', icon: '➗', gen: () => this.genMathDivQuiz() }
         };
 
         const config = quizConfig[type];
@@ -772,6 +774,22 @@ const App = {
                 type: 'mathMul',
                 question: `${a} × ${b} = ?`,
                 answer: String(a * b),
+                inputType: 'number'
+            });
+        }
+        return questions;
+    },
+
+    genMathDivQuiz() {
+        const questions = [];
+        for (let i = 0; i < 10; i++) {
+            const b = Math.floor(Math.random() * 9) + 1; // 除数（个位数）
+            const answer = Math.floor(Math.random() * 9) + 1; // 商（个位数）
+            const a = b * answer; // 被除数
+            questions.push({
+                type: 'mathDiv',
+                question: `${a} ÷ ${b} = ?`,
+                answer: String(answer),
                 inputType: 'number'
             });
         }
@@ -903,6 +921,7 @@ const App = {
 
             case 'mathAdd':
             case 'mathMul':
+            case 'mathDiv':
                 container.innerHTML = `
                     <div class="quiz-word">${question.question}</div>
                     <input type="number" class="quiz-input" id="quizInput" placeholder="输入答案" autocomplete="off">
