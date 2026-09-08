@@ -26,8 +26,8 @@ const ENGLISH_EXAM_U1 = [
         points: 4,
         image: 'images/english_exam/image3.png',
         question: '看一看图片，选择正确的英文句子。',
-        options: ['A. I can see the rabbit.', 'B. I can smell the rabbit.', 'C. I can feel the rabbit.'],
-        answer: 'C. I can feel the rabbit.'
+        options: ['A. I can see the rabbit.', 'B. I can smell the rabbit.', 'C. I can touch the rabbit.'],
+        answer: 'C. I can touch the rabbit.'
     },
     {
         section: '一、看图选一选（每题 4 分，共 20 分）',
@@ -221,7 +221,7 @@ const ENGLISH_EXAM_U1 = [
         section: '六、排序题（共 10 分）',
         type: 'engExamChoice',
         points: 10,
-        question: '盲人摸象的故事中，四位盲人分别说了什么？请将句子序号按故事顺序排列。\n① No. It’s soft.  ② The elephant is hard.  ③ No. It’s thick.  ④ It’s thin.  ⑤ Come and feel my elephant.',
+        question: '盲人摸象的故事中，四位盲人分别说了什么？请将句子序号按故事顺序排列。\n① No. It’s soft.\n② The elephant is hard.\n③ No. It’s thick.\n④ It’s thin.\n⑤ Come and feel my elephant.',
         options: [
             '⑤ → ② → ① → ④ → ③',
             '⑤ → ① → ② → ③ → ④',
