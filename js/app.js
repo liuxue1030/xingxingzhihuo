@@ -122,6 +122,11 @@ const App = {
         this._homeScroll = 0;
         this._stopAllAudio();
         if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+        if (this._focusVisibilityHandler) {
+            document.removeEventListener('visibilitychange', this._focusVisibilityHandler);
+            this._focusVisibilityHandler = null;
+        }
+        this._releaseFocusWakeLock();
         document.getElementById('backBtn').style.display = 'none';
         const main = document.getElementById('main-content');
         main.innerHTML = '';
@@ -5345,8 +5350,13 @@ const App = {
     // 模块：专注时间（倒计时）
     // ========================================================
     renderFocusTimer() {
-        // 进入时清除任何残留计时器
+        // 进入时清除任何残留计时器、监听器与亮屏锁
         if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+        if (this._focusVisibilityHandler) {
+            document.removeEventListener('visibilitychange', this._focusVisibilityHandler);
+            this._focusVisibilityHandler = null;
+        }
+        this._releaseFocusWakeLock();
         this._focusTotal = 0;
         this._focusElapsed = 0;
         this._focusRunning = false;
@@ -5391,6 +5401,12 @@ const App = {
         `;
         document.getElementById('main-content').innerHTML = html;
 
+        // 切回前台时若正在计时则重新请求亮屏
+        this._focusVisibilityHandler = () => {
+            if (!document.hidden && this._focusRunning) this._requestFocusWakeLock();
+        };
+        document.addEventListener('visibilitychange', this._focusVisibilityHandler);
+
         // 选择时长后立即开始计时
         document.querySelectorAll('.focus-timer-opt').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -5421,6 +5437,7 @@ const App = {
             this._focusElapsed = 0;
             this._focusRunning = false;
             if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+            this._releaseFocusWakeLock();
             this._updateFocusDisplay();
             this._startFocusTimer();
         };
@@ -5434,6 +5451,7 @@ const App = {
         this._focusRunning = true;
         const toggle = document.getElementById('focusToggle');
         if (toggle) toggle.textContent = '⏸ 暂停';
+        this._requestFocusWakeLock();
         this._focusTimer = setInterval(() => {
             this._focusElapsed++;
             this._updateFocusDisplay();
@@ -5446,6 +5464,7 @@ const App = {
     _pauseFocusTimer() {
         this._focusRunning = false;
         if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+        this._releaseFocusWakeLock();
         const toggle = document.getElementById('focusToggle');
         if (toggle) toggle.textContent = '▶ 继续';
     },
@@ -5453,11 +5472,12 @@ const App = {
     _finishFocusTimer() {
         this._focusRunning = false;
         if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+        this._releaseFocusWakeLock();
         const toggle = document.getElementById('focusToggle');
         if (toggle) toggle.textContent = '↺ 再来一次';
         const e = document.getElementById('focusElapsed');
-        if (e) e.textContent = '专注完成！🎉 太棒了';
-        if (window.TTS) TTS.speakChinese('专注完成，你真棒！');
+        if (e) e.textContent = '时间到！恭喜完成！🎉';
+        if (window.TTS) TTS.speakChinese('时间到！恭喜完成！');
     },
 
     _updateFocusDisplay() {
@@ -5472,6 +5492,31 @@ const App = {
         const m = Math.floor(sec / 60);
         const s = sec % 60;
         return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    },
+
+    _requestFocusWakeLock() {
+        if (!('wakeLock' in navigator)) return;
+        if (this._focusWakeLock && !this._focusWakeLock.released) return;
+        navigator.wakeLock.request('screen').then(lock => {
+            this._focusWakeLock = lock;
+            lock.addEventListener('release', () => {
+                // 若计时仍在运行且被系统释放（如切后台），重新请求
+                if (this._focusRunning && document.visibilityState === 'visible') {
+                    this._requestFocusWakeLock();
+                }
+            });
+        }).catch(() => {
+            // 静默降级：不支持的浏览器不做处理
+        });
+    },
+
+    _releaseFocusWakeLock() {
+        if (this._focusWakeLock) {
+            if (!this._focusWakeLock.released) {
+                this._focusWakeLock.release().catch(() => {});
+            }
+            this._focusWakeLock = null;
+        }
     },
 
     // ========================================================
