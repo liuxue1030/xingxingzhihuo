@@ -3955,20 +3955,20 @@ input[type="file"] {
 .focus-timer-card {
     background: var(--card-bg);
     border-radius: var(--radius);
-    padding: 20px 14px;
+    padding: 36px 14px;
     box-shadow: var(--shadow);
     margin-bottom: 14px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 22px;
 }
 .focus-timer-stage {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    min-height: 68px;
+    gap: 8px;
+    min-height: 110px;
     justify-content: center;
     width: 100%;
 }
