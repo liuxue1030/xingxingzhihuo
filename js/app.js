@@ -4829,26 +4829,29 @@ const App = {
     renderCnTextbook() {
         this.navigateSub(() => {
             let html = `<h1 class="page-title">📕 语文课文二上</h1>
-                <div class="unit-list">`;
+                <div class="cn-flat-list">`;
 
-            CHINESE_TEXTBOOK.forEach((unit, idx) => {
-                const lessonTitles = unit.lessons.map(l => l.title).join('、');
-                html += `<div class="unit-card" data-unit="${idx}">
-                    <div>
-                        <span class="unit-card-title">${unit.unit}</span>
-                        <div style="font-size:13px;color:#999;margin-top:4px;">${lessonTitles}</div>
-                    </div>
-                    <span>▶</span>
-                </div>`;
+            CHINESE_TEXTBOOK.forEach((unit, uIdx) => {
+                html += `<div class="cn-flat-unit">${unit.unit}</div>`;
+                html += `<div class="cn-flat-items">`;
+                unit.lessons.forEach((lesson, lIdx) => {
+                    const isGarden = lesson.isGarden;
+                    html += `<div class="cn-flat-item" data-u="${uIdx}" data-l="${lIdx}">
+                        <span class="cn-flat-title">${lesson.title}</span>
+                        <span class="cn-flat-icon">${isGarden ? '🌿' : '📖'}</span>
+                    </div>`;
+                });
+                html += `</div>`;
             });
 
             html += `</div>`;
             document.getElementById('main-content').innerHTML = html;
 
-            document.querySelectorAll('.unit-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const idx = parseInt(card.dataset.unit);
-                    this.renderCnUnitLessons(idx);
+            document.querySelectorAll('.cn-flat-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const u = parseInt(item.dataset.u);
+                    const l = parseInt(item.dataset.l);
+                    this.renderCnLessonReader(u, l);
                 });
             });
         });

@@ -1639,6 +1639,53 @@ body {
     transform: scale(0.98);
 }
 
+/* 语文课本平铺目录 */
+.cn-flat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cn-flat-unit {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--primary);
+    margin: 8px 0 4px 4px;
+    padding-left: 8px;
+    border-left: 4px solid var(--primary);
+}
+
+.cn-flat-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cn-flat-item {
+    background: var(--card-bg);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cn-flat-item:active {
+    transform: scale(0.98);
+}
+
+.cn-flat-title {
+    font-size: var(--font-size-base);
+    color: var(--text);
+}
+
+.cn-flat-icon {
+    font-size: 18px;
+    color: #999;
+}
+
 /* 课文阅读 */
 .text-reader {
     background: var(--card-bg);
