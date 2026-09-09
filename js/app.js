@@ -5360,7 +5360,11 @@ const App = {
             { label: '3分钟', sec: 180 },
             { label: '5分钟', sec: 300 },
             { label: '10分钟', sec: 600 },
-            { label: '15分钟', sec: 900 }
+            { label: '15分钟', sec: 900 },
+            { label: '20分钟', sec: 1200 },
+            { label: '30分钟', sec: 1800 },
+            { label: '45分钟', sec: 2700 },
+            { label: '60分钟', sec: 3600 }
         ];
 
         let optHtml = '';
@@ -5412,13 +5416,13 @@ const App = {
                 this._startFocusTimer();
             }
         };
-        // 重置
+        // 重置后自动开始计时
         document.getElementById('focusReset').onclick = () => {
             this._focusElapsed = 0;
             this._focusRunning = false;
             if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
-            document.getElementById('focusToggle').textContent = '⏸ 暂停';
             this._updateFocusDisplay();
+            this._startFocusTimer();
         };
     },
 
