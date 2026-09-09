@@ -1359,10 +1359,56 @@ const CHINESE_TEXTBOOK = [
   <li>田里的西瓜又大又圆。</li>
   <li>夜晚的星星又明又亮。</li>
 </ul>`},
-        { title: "语文园地二", content: `日积月累：
-己所不欲，勿施于人。——《论语》
-与朋友交，言而有信。——《论语》
-不以规矩，不能成方圆。——《孟子》`, isGarden: true },
+        { title: "语文园地二", content: `<h3 style="font-size:16px;margin:14px 0 8px;">识字加油站</h3>
+<p>美对丑，爱对恨。真诚对虚假，热忱对冷漠。</p>
+<p>雪中送炭见真情，助人为乐献爱心。</p>
+<p>贫对富，冷对暖。饥寒对温饱，索取对奉献。</p>
+<p>人人献出一点爱，人间永远是春天。</p>
+
+<h3 style="font-size:16px;margin:14px 0 8px;">部首查字法（以“诚”为例）</h3>
+<p>1. 要查“诚”的读音，先要确定这个字的部首是“讠”，再数数“讠”的笔画，共2画。</p>
+<p>2. 在“部首目录”里的“2画”中找到部首“讠”和它所在的页码。</p>
+<p>3. 按照页码，在“检字表”中找“讠”部。再数数“诚”字除去部首还有几画，然后在相应笔画数的位置找到“诚”字和它在正文中的页码。</p>
+<p>4. 按照页码，在正文中就可以查到“诚”字了。</p>
+
+<p><strong>查一查下面的部首在“检字表”的哪一页。</strong></p>
+<p>忄（ ） 亻（ ） 讠（ ） 宀（ ） 饣（ ）</p>
+
+<p><strong>用部首查字法查查下面的字。</strong></p>
+<table style="width:100%;border-collapse:collapse;margin:8px 0;font-size:14px;">
+  <tr style="background:#f5f0e6;"><th style="border:1px solid #d4c4a8;padding:6px;">要查的字</th><th style="border:1px solid #d4c4a8;padding:6px;">部首</th><th style="border:1px solid #d4c4a8;padding:6px;">除去部首有几画</th><th style="border:1px solid #d4c4a8;padding:6px;">字的页码</th><th style="border:1px solid #d4c4a8;padding:6px;">读音</th></tr>
+  <tr><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;">恨</td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td></tr>
+  <tr><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;">假</td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td></tr>
+  <tr><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;">漠</td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td></tr>
+  <tr><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;">富</td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td></tr>
+  <tr><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;">饥</td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td><td style="border:1px solid #d4c4a8;padding:6px;text-align:center;"></td></tr>
+</table>
+
+<p><strong>我会认：</strong>丑 恨 诚 虚 假 漠 助 贫 富 饥 永</p>
+<p><strong>我会写：</strong>丑 诚</p>
+
+<h3 style="font-size:16px;margin:14px 0 8px;">日积月累</h3>
+<p style="text-align:center;font-weight:bold;">数九歌</p>
+<p style="text-align:center;">一九二九不出手，</p>
+<p style="text-align:center;">三九四九冰上走，</p>
+<p style="text-align:center;">五九六九，沿河看柳，</p>
+<p style="text-align:center;">七九河开，八九雁来，</p>
+<p style="text-align:center;">九九加一九，耕牛遍地走。</p>
+
+<h3 style="font-size:16px;margin:14px 0 8px;">我爱阅读</h3>
+<p style="text-align:center;font-weight:bold;">十二月花名歌</p>
+<p style="text-align:center;">正月山茶满盆开，</p>
+<p style="text-align:center;">二月迎春初开放。</p>
+<p style="text-align:center;">三月桃花红十里，</p>
+<p style="text-align:center;">四月牡丹国色香。</p>
+<p style="text-align:center;">五月石榴红似火，</p>
+<p style="text-align:center;">六月荷花满池塘。</p>
+<p style="text-align:center;">七月茉莉花如雪，</p>
+<p style="text-align:center;">八月桂花满枝香。</p>
+<p style="text-align:center;">九月菊花姿百态，</p>
+<p style="text-align:center;">十月芙蓉正上妆。</p>
+<p style="text-align:center;">冬月水仙案头摆，</p>
+<p style="text-align:center;">腊月寒梅斗冰霜。</p>`, isGarden: true },
     ]},
     { unit: "第三单元 儿童生活", lessons: [
         { title: "4 曹冲称象", audio: "https://ywld-1315558954.51jiaoxi.com/yw-static/lesson/ar_audio/b0e70edeb28787202ae13ca6ef5311d9.mp3", content: `古时候有个大官，叫曹操。别人送他一头大象，他很高兴，带着儿子和官员们一同去看。
