@@ -664,7 +664,6 @@ const App = {
             html += `<div class="assessment-card ${done ? 'disabled' : ''}" data-assess="${a.id}">
                 <div class="assess-icon">${a.icon}</div>
                 <div class="assess-name">${a.name}</div>
-                <div class="assess-desc">${done ? '今日已完成' : a.desc}</div>
             </div>`;
         });
 
@@ -2545,13 +2544,13 @@ const App = {
         const tools = [
             { id: 'engTextbook', icon: '📘', name: '英语课文二上' },
             { id: 'cnTextbook', icon: '📕', name: '语文课文二上' },
+            { id: 'shengzi', icon: '📚', name: '语文生字' },
             { id: 'focus', icon: '🧘', name: '专注力训练' },
             { id: 'idioms', icon: '📚', name: '成语故事' },
             { id: 'poems', icon: '📜', name: '小学生古诗75首' },
             { id: 'mathTypes', icon: '🧮', name: '数学专项题型' },
             { id: 'pinyin', icon: '🔤', name: '汉语拼音' },
             { id: 'stroke', icon: '✍️', name: '汉字笔顺查询' },
-            { id: 'shengzi', icon: '📚', name: '语文生字' },
             { id: 'kantu', icon: '🖼️', name: '看图写话扩句法' },
             { id: 'songs', icon: '🎵', name: '英文儿歌' },
             { id: 'phonetics', icon: '🗣️', name: '国际音标48个' },

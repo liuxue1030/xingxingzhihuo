@@ -101,6 +101,25 @@ const Storage = {
                             }
                         });
                     });
+
+                    // 迁移：将运动分类的排序同步为默认顺序（保留用户自定义项在末尾）
+                    const sportDefault = DEFAULT_CHECKIN_CATEGORIES.find(dc => dc.name === '运动');
+                    const sportCat = cats.find(c => c.name === '运动');
+                    if (sportDefault && sportCat && Array.isArray(sportCat.items)) {
+                        const orderMap = new Map(sportDefault.items.map((di, idx) => [di.name, idx]));
+                        const defaultItems = [];
+                        const customItems = [];
+                        sportCat.items.forEach(it => {
+                            if (orderMap.has(it.name)) defaultItems.push(it);
+                            else customItems.push(it);
+                        });
+                        defaultItems.sort((a, b) => orderMap.get(a.name) - orderMap.get(b.name));
+                        const newItems = defaultItems.concat(customItems);
+                        if (sportCat.items.length !== newItems.length || sportCat.items.some((it, i) => it.name !== newItems[i].name)) {
+                            sportCat.items = newItems;
+                            checkinChanged = true;
+                        }
+                    }
                 });
                 if (checkinChanged) this.saveDB(db);
             }

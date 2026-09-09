@@ -1571,12 +1571,16 @@ const DEFAULT_CHECKIN_CATEGORIES = [
     },
     {
         name: "运动", icon: "⚽", items: [
+            { name: "吊杠", stars: 2 },
             { name: "跳绳", stars: 2 },
             { name: "滑轮", stars: 2 },
             { name: "羽毛球", stars: 3 },
             { name: "跑步", stars: 2 },
             { name: "篮球", stars: 3 },
-            { name: "游泳", stars: 2 }
+            { name: "游泳", stars: 2 },
+            { name: "仰卧起坐", stars: 2 },
+            { name: "平板支撑", stars: 2 },
+            { name: "俯卧撑", stars: 2 }
         ]
     },
     {
