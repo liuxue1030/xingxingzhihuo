@@ -121,6 +121,7 @@ const App = {
         this._scrollStack = [];
         this._homeScroll = 0;
         this._stopAllAudio();
+        if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
         document.getElementById('backBtn').style.display = 'none';
         const main = document.getElementById('main-content');
         main.innerHTML = '';
@@ -131,6 +132,7 @@ const App = {
             case 'tools': this.renderToolsList(); break;
             case 'exam': this.renderExam(); break;
             case 'mall': this.renderMall(); break;
+            case 'focusTimer': this.renderFocusTimer(); break;
         }
         window.scrollTo(0, 0);
     },
@@ -5337,6 +5339,135 @@ const App = {
             ${photoBlock}
         `;
         this.showModal('📝 考试详情', bodyHtml);
+    },
+
+    // ========================================================
+    // 模块：专注时间（倒计时）
+    // ========================================================
+    renderFocusTimer() {
+        // 进入时清除任何残留计时器
+        if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+        this._focusTotal = 0;
+        this._focusElapsed = 0;
+        this._focusRunning = false;
+
+        const presets = [
+            { label: '30秒', sec: 30 },
+            { label: '45秒', sec: 45 },
+            { label: '60秒', sec: 60 },
+            { label: '100秒', sec: 100 },
+            { label: '2分钟', sec: 120 },
+            { label: '3分钟', sec: 180 },
+            { label: '5分钟', sec: 300 },
+            { label: '10分钟', sec: 600 },
+            { label: '15分钟', sec: 900 }
+        ];
+
+        let optHtml = '';
+        presets.forEach(p => {
+            optHtml += `<button class="focus-timer-opt" data-sec="${p.sec}">${p.label}</button>`;
+        });
+
+        const html = `<h1 class="page-title">⏱️ 专注时间</h1>
+            <div class="focus-timer-card">
+                <div class="focus-timer-stage" id="focusStage">
+                    <div class="focus-timer-hint" id="focusHint">选择一个时长，开始专注吧～</div>
+                    <div class="focus-timer-count" id="focusCount" style="display:none;">00:00</div>
+                    <div class="focus-timer-elapsed" id="focusElapsed" style="display:none;">已专注 00:00</div>
+                </div>
+                <div class="focus-timer-controls" id="focusControls" style="display:none;">
+                    <button class="btn btn-primary btn-lg" id="focusToggle">⏸ 暂停</button>
+                    <button class="btn btn-secondary btn-lg" id="focusReset">↺ 重置</button>
+                </div>
+            </div>
+            <div class="focus-timer-options">
+                <div class="focus-timer-opt-title">⏳ 选择专注时长</div>
+                <div class="focus-timer-grid">${optHtml}</div>
+            </div>
+        `;
+        document.getElementById('main-content').innerHTML = html;
+
+        // 选择时长后立即开始计时
+        document.querySelectorAll('.focus-timer-opt').forEach(btn => {
+            btn.addEventListener('click', () => {
+                this._focusTotal = +btn.dataset.sec;
+                this._focusElapsed = 0;
+                this._focusRunning = false;
+                if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+                document.getElementById('focusHint').style.display = 'none';
+                document.getElementById('focusCount').style.display = '';
+                document.getElementById('focusElapsed').style.display = '';
+                document.getElementById('focusControls').style.display = 'flex';
+                document.getElementById('focusElapsed').textContent = `已专注 ${this._fmtTime(0)}`;
+                this._updateFocusDisplay();
+                this._startFocusTimer();
+            });
+        });
+
+        // 暂停 / 继续
+        document.getElementById('focusToggle').onclick = () => {
+            if (this._focusRunning) {
+                this._pauseFocusTimer();
+            } else {
+                this._startFocusTimer();
+            }
+        };
+        // 重置
+        document.getElementById('focusReset').onclick = () => {
+            this._focusElapsed = 0;
+            this._focusRunning = false;
+            if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+            document.getElementById('focusToggle').textContent = '⏸ 暂停';
+            this._updateFocusDisplay();
+        };
+    },
+
+    _startFocusTimer() {
+        if (this._focusRunning) return;
+        if (this._focusElapsed >= this._focusTotal) {
+            this._focusElapsed = 0; // 上一轮已完成，重新计时
+        }
+        this._focusRunning = true;
+        const toggle = document.getElementById('focusToggle');
+        if (toggle) toggle.textContent = '⏸ 暂停';
+        this._focusTimer = setInterval(() => {
+            this._focusElapsed++;
+            this._updateFocusDisplay();
+            if (this._focusElapsed >= this._focusTotal) {
+                this._finishFocusTimer();
+            }
+        }, 1000);
+    },
+
+    _pauseFocusTimer() {
+        this._focusRunning = false;
+        if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+        const toggle = document.getElementById('focusToggle');
+        if (toggle) toggle.textContent = '▶ 继续';
+    },
+
+    _finishFocusTimer() {
+        this._focusRunning = false;
+        if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+        const toggle = document.getElementById('focusToggle');
+        if (toggle) toggle.textContent = '↺ 再来一次';
+        const e = document.getElementById('focusElapsed');
+        if (e) e.textContent = '专注完成！🎉 太棒了';
+        if (window.TTS) TTS.speakChinese('专注完成，你真棒！');
+    },
+
+    _updateFocusDisplay() {
+        const remain = Math.max(0, this._focusTotal - this._focusElapsed);
+        const c = document.getElementById('focusCount');
+        const e = document.getElementById('focusElapsed');
+        if (c) c.textContent = this._fmtTime(remain);
+        if (e) e.textContent = '已专注 ' + this._fmtTime(this._focusElapsed);
+    },
+
+    _fmtTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
     },
 
     // ========================================================
