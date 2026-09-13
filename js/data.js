@@ -1899,11 +1899,12 @@ const DEFAULT_REWARD_RULES = {
         passLine: 90    // 合格线
     },
     exam: [
-        { min: 100, max: 100, stars: 10 },
-        { min: 95, max: 99.9, stars: 5 },
-        { min: 90, max: 94.9, stars: 2 },
-        { min: 80, max: 89.9, stars: 1 },
-        { min: 0, max: 79.9, stars: 0 }
+        { min: 100, max: 100, stars: 50 },
+        { min: 95, max: 99.9, stars: 30 },
+        { min: 90, max: 94.9, stars: 20 },
+        { min: 85, max: 89.9, stars: 10 },
+        { min: 80, max: 84.9, stars: 5 },
+        { min: 0, max: 79.9, stars: 2 }
     ]
 };
 
