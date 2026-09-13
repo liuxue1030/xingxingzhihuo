@@ -109,6 +109,19 @@ const App = {
     },
 
     navigate(page, pushStack = true) {
+        // 专注时间计时进行中，切换到其它页面前先确认，避免误触丢失计时
+        if (this._focusRunning && this.currentPage === 'focusTimer' && page !== 'focusTimer') {
+            const targetPage = page;
+            const targetPush = pushStack;
+            this.showConfirm('专注计时仍在进行，是否退出计时？', () => {
+                this._doNavigate(targetPage, targetPush);
+            }, '是', '否');
+            return;
+        }
+        this._doNavigate(page, pushStack);
+    },
+
+    _doNavigate(page, pushStack = true) {
         if (pushStack && this.currentPage !== page) {
             this.pageStack.push(this.currentPage);
         }
