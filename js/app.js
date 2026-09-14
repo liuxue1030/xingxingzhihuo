@@ -135,6 +135,8 @@ const App = {
         this._homeScroll = 0;
         this._stopAllAudio();
         if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+        if (this._leadInTimer) { clearTimeout(this._leadInTimer); this._leadInTimer = null; }
+        this._leadInToken = (this._leadInToken || 0) + 1;
         if (this._focusVisibilityHandler) {
             document.removeEventListener('visibilitychange', this._focusVisibilityHandler);
             this._focusVisibilityHandler = null;
@@ -5367,6 +5369,8 @@ const App = {
     renderFocusTimer() {
         // 进入时清除任何残留计时器、监听器与亮屏锁
         if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+        if (this._leadInTimer) { clearTimeout(this._leadInTimer); this._leadInTimer = null; }
+        this._leadInToken = (this._leadInToken || 0) + 1;
         if (this._focusVisibilityHandler) {
             document.removeEventListener('visibilitychange', this._focusVisibilityHandler);
             this._focusVisibilityHandler = null;
@@ -5375,6 +5379,7 @@ const App = {
         this._focusTotal = 0;
         this._focusElapsed = 0;
         this._focusRunning = false;
+        this._focusPaused = false;
 
         const presets = [
             { label: '30秒', sec: 30 },
@@ -5422,50 +5427,112 @@ const App = {
         };
         document.addEventListener('visibilitychange', this._focusVisibilityHandler);
 
-        // 选择时长后立即开始计时
+        // 选择时长后立即开始计时（先 3-2-1 语音引导，再正式计时）
         document.querySelectorAll('.focus-timer-opt').forEach(btn => {
             btn.addEventListener('click', () => {
-                this._focusTotal = +btn.dataset.sec;
-                this._focusElapsed = 0;
-                this._focusRunning = false;
-                if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
-                document.getElementById('focusHint').style.display = 'none';
-                document.getElementById('focusCount').style.display = '';
-                document.getElementById('focusElapsed').style.display = '';
-                document.getElementById('focusControls').style.display = 'flex';
-                document.getElementById('focusElapsed').textContent = `已专注 ${this._fmtTime(0)}`;
-                this._updateFocusDisplay();
-                this._startFocusTimer();
+                const startNew = () => {
+                    this._focusTotal = +btn.dataset.sec;
+                    this._focusElapsed = 0;
+                    this._focusRunning = false;
+                    this._focusPaused = false;
+                    if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+                    if (this._leadInTimer) { clearTimeout(this._leadInTimer); this._leadInTimer = null; }
+                    this._leadInToken = (this._leadInToken || 0) + 1;
+                    document.getElementById('focusHint').style.display = 'none';
+                    document.getElementById('focusCount').style.display = '';
+                    document.getElementById('focusElapsed').style.display = '';
+                    document.getElementById('focusControls').style.display = 'flex';
+                    document.getElementById('focusElapsed').textContent = `已专注 ${this._fmtTime(0)}`;
+                    this._updateFocusDisplay();
+                    this._startFocusTimer(true);
+                };
+                if (this._focusRunning) {
+                    this.showConfirm('专注计时仍在进行，是否退出并开始新的计时？', startNew, '是', '否');
+                } else {
+                    startNew();
+                }
             });
         });
 
-        // 暂停 / 继续
+        // 暂停 / 继续（暂停后续开始不引导，直接续接）
         document.getElementById('focusToggle').onclick = () => {
             if (this._focusRunning) {
                 this._pauseFocusTimer();
             } else {
-                this._startFocusTimer();
+                this._startFocusTimer(!this._focusPaused);
             }
         };
-        // 重置后自动开始计时
+        // 重置后自动开始计时（先 3-2-1 语音引导，再正式计时）
         document.getElementById('focusReset').onclick = () => {
-            this._focusElapsed = 0;
-            this._focusRunning = false;
-            if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
-            this._releaseFocusWakeLock();
-            this._updateFocusDisplay();
-            this._startFocusTimer();
+            const doReset = () => {
+                this._focusElapsed = 0;
+                this._focusRunning = false;
+                this._focusPaused = false;
+                if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+                if (this._leadInTimer) { clearTimeout(this._leadInTimer); this._leadInTimer = null; }
+                this._leadInToken = (this._leadInToken || 0) + 1;
+                this._releaseFocusWakeLock();
+                this._updateFocusDisplay();
+                this._startFocusTimer(true);
+            };
+            if (this._focusRunning) {
+                this.showConfirm('专注计时仍在进行，是否退出并重置？', doReset, '是', '否');
+            } else {
+                doReset();
+            }
         };
     },
 
-    _startFocusTimer() {
+    _startFocusTimer(withLeadIn) {
         if (this._focusRunning) return;
+        if (this._leadInTimer) { clearTimeout(this._leadInTimer); this._leadInTimer = null; }
         if (this._focusElapsed >= this._focusTotal) {
             this._focusElapsed = 0; // 上一轮已完成，重新计时
         }
+        if (withLeadIn) {
+            this._runLeadIn(() => this._beginFocusCounting());
+        } else {
+            this._beginFocusCounting();
+        }
+    },
+
+    // 3-2-1 语音引导倒计时：依次显示 3→2→1→开始，每步中文播报，结束后开始正式计时
+    _runLeadIn(done) {
+        const token = (this._leadInToken || 0) + 1;
+        this._leadInToken = token;
+        const countEl = document.getElementById('focusCount');
+        const hintEl = document.getElementById('focusHint');
+        const elapsedEl = document.getElementById('focusElapsed');
+        if (hintEl) hintEl.style.display = 'none';
+        if (countEl) { countEl.style.display = ''; countEl.textContent = '3'; }
+        if (elapsedEl) { elapsedEl.style.display = ''; elapsedEl.textContent = '准备开始…'; }
+        const steps = ['3', '2', '1', '开始'];
+        let i = 0;
+        const tick = () => {
+            if (this._leadInToken !== token) return; // 已被新计时或切页取消
+            const t = steps[i];
+            if (countEl) countEl.textContent = t;
+            if (window.TTS) { try { TTS.speakChinese(t); } catch (e) {} }
+            i++;
+            if (i < steps.length) {
+                this._leadInTimer = setTimeout(tick, 1000);
+            } else {
+                this._leadInTimer = setTimeout(() => {
+                    if (this._leadInToken !== token) return;
+                    this._leadInTimer = null;
+                    if (typeof done === 'function') done();
+                }, 900);
+            }
+        };
+        tick();
+    },
+
+    _beginFocusCounting() {
         this._focusRunning = true;
+        this._focusPaused = false;
         const toggle = document.getElementById('focusToggle');
         if (toggle) toggle.textContent = '⏸ 暂停';
+        this._updateFocusDisplay();
         this._requestFocusWakeLock();
         this._focusTimer = setInterval(() => {
             this._focusElapsed++;
@@ -5478,7 +5545,9 @@ const App = {
 
     _pauseFocusTimer() {
         this._focusRunning = false;
+        this._focusPaused = true;
         if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+        if (this._leadInTimer) { clearTimeout(this._leadInTimer); this._leadInTimer = null; this._leadInToken = (this._leadInToken || 0) + 1; }
         this._releaseFocusWakeLock();
         const toggle = document.getElementById('focusToggle');
         if (toggle) toggle.textContent = '▶ 继续';
@@ -5486,7 +5555,9 @@ const App = {
 
     _finishFocusTimer() {
         this._focusRunning = false;
+        this._focusPaused = false;
         if (this._focusTimer) { clearInterval(this._focusTimer); this._focusTimer = null; }
+        if (this._leadInTimer) { clearTimeout(this._leadInTimer); this._leadInTimer = null; this._leadInToken = (this._leadInToken || 0) + 1; }
         this._releaseFocusWakeLock();
         const toggle = document.getElementById('focusToggle');
         if (toggle) toggle.textContent = '↺ 再来一次';
