@@ -234,7 +234,6 @@ const ENGLISH_WORDS = [
 
     // 自然拼读与形容词 (2026-09-16 新增)
     { en: "hat", zh: "帽子" },
-    { en: "cat", zh: "猫" },
     { en: "fat", zh: "胖的" },
     { en: "cap", zh: "鸭舌帽" },
     { en: "map", zh: "地图" },
@@ -1866,7 +1865,7 @@ const DEFAULT_CHECKIN_CATEGORIES = [
             { name: "课后作业", stars: 3 },
             { name: "做一套试卷", stars: 5 },
             { name: "汉字字帖", stars: 2 },
-            { name: "听写全队", stars: 2 }
+            { name: "听写全对", stars: 2 }
         ]
     },
     {
