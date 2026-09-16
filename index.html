@@ -8,8 +8,13 @@
     <meta name="theme-color" content="#FFD700">
     <title>星星之火</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- 云端同步 SDK（仅在应用发布域名生效，加载失败自动降级本地模式） -->
-    <script src="https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js"></script>
+    <!-- 云端同步 SDK（本地内置，避免 jsdelivr 在国内被墙导致加载失败；本地缺失时回退 CDN） -->
+    <script src="js/workbuddy-cloud-sdk.js"></script>
+    <script>
+      if (typeof WorkBuddyCloud === 'undefined') {
+        document.write('<scr' + 'ipt src="https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js"><\/scr' + 'ipt>');
+      }
+    </script>
 </head>
 <body>
     <!-- 登录界面 -->

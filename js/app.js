@@ -408,7 +408,7 @@ const App = {
 
         let html = `
             <h1 class="page-title">📅 星星总览</h1>
-            <div class="home-header">
+                <div class="home-header">
                 <div class="child-info">
                     <div class="child-name-row">
                         <span class="child-nickname">${child.avatar} ${child.nickname}</span>
@@ -416,6 +416,7 @@ const App = {
                     </div>
                     <span class="star-balance-hint">🟢 绿色=当日获得 🔴 红色=当日扣除</span>
                 </div>
+                <div id="cloudAccountArea" class="cloud-account-area"></div>
             </div>
         `;
 
@@ -452,6 +453,28 @@ const App = {
             this.calendarDate.setMonth(this.calendarDate.getMonth() + 1);
             this.renderHome();
         };
+        this.updateCloudAccountBtn();
+    },
+
+    // 首页账号同步状态条：仅在云端启用时显示；已登录显示邮箱+退出，未登录显示登录按钮
+    updateCloudAccountBtn() {
+        const area = document.getElementById('cloudAccountArea');
+        if (!area) return;
+        if (!(window.Cloud && Cloud.enabled)) { area.style.display = 'none'; area.innerHTML = ''; return; }
+        area.style.display = 'block';
+        if (Cloud.isSignedIn) {
+            area.innerHTML = `<div class="cloud-account-bar signed">
+                <span class="cloud-account-state">☁️ 已同步云端</span>
+                <span class="cloud-account-email">${Cloud.userEmail || ''}</span>
+                <button class="cloud-account-btn" id="cloudLogoutBtn">退出</button>
+            </div>`;
+            const lb = document.getElementById('cloudLogoutBtn');
+            if (lb) lb.onclick = () => { if (window.Cloud) Cloud.signOut(); };
+        } else {
+            area.innerHTML = `<button class="cloud-account-btn primary" id="cloudLoginBtn">☁️ 登录 / 注册，多手机同步</button>`;
+            const lb = document.getElementById('cloudLoginBtn');
+            if (lb) lb.onclick = () => { if (window.Cloud) Cloud.openLogin(); };
+        }
     },
 
     renderCalendar(year, month, monthlyStars) {

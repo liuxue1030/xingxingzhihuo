@@ -4164,3 +4164,52 @@ input[type="file"] {
     font-size: 13px;
     min-height: 18px;
 }
+/* 登录框底部：暂不登录 */
+.cloud-skip {
+    margin-top: 14px;
+    color: #bdbdbd;
+    font-size: 12px;
+    cursor: pointer;
+}
+.cloud-skip:active { color: #999; }
+
+/* 首页账号同步状态条 */
+.cloud-account-area { margin-top: 12px; }
+.cloud-account-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #fff3e0, #ffe7b3);
+    border: 1px solid #ffcc80;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 13px;
+}
+.cloud-account-bar.signed .cloud-account-state { color: #ef6c00; font-weight: 700; }
+.cloud-account-email {
+    flex: 1;
+    color: #888;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.cloud-account-btn {
+    border: none;
+    background: #fff;
+    color: #ef6c00;
+    border: 1px solid #ffb74d;
+    border-radius: 10px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.cloud-account-btn.primary {
+    width: 100%;
+    background: #ff9800;
+    color: #fff;
+    border: none;
+    padding: 11px;
+    font-size: 14px;
+}
+.cloud-account-btn:active { transform: scale(0.97); }

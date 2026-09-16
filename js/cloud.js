@@ -13,6 +13,7 @@ const Cloud = (function () {
     let loginResolve = null;
     let pushTimer = null;
     let pushPending = null;
+    let userEmail = null;
 
     function toast(msg, ms) {
         if (window.App && App.showToast) App.showToast(msg, ms || 2500);
@@ -46,7 +47,9 @@ const Cloud = (function () {
         }
         const { data: s, error } = await cloud.auth.getSession();
         if (s && !error) {
+            userEmail = (s.user && s.user.email) || null;
             await pullAndSeed();
+            refreshAccountBtn();
             return;
         }
         await showLogin();
@@ -119,11 +122,35 @@ const Cloud = (function () {
         });
     }
 
+    // 应用内手动打开登录（账号按钮调用）；若已在显示则不重复
+    function openLogin() {
+        const el = document.getElementById('cloudLogin');
+        if (el && el.style.display === 'flex') return;
+        showLogin();
+    }
+
+    // 暂不登录，本地使用：关闭遮罩并放行（仅当 boot 正等待登录时有效）
+    function skipLogin() {
+        const el = document.getElementById('cloudLogin');
+        if (el) el.style.display = 'none';
+        const r = loginResolve; loginResolve = null;
+        if (r) r(false);
+        refreshAccountBtn();
+    }
+
     function finishLogin() {
         const el = document.getElementById('cloudLogin');
         if (el) el.style.display = 'none';
         const r = loginResolve; loginResolve = null;
-        pullAndSeed().then(() => { if (r) r(true); });
+        pullAndSeed().then(async () => {
+            try { const { data: u } = await cloud.auth.getUser(); userEmail = (u && u.email) || null; } catch (e) {}
+            refreshAccountBtn();
+            if (r) r(true);
+        });
+    }
+
+    function refreshAccountBtn() {
+        if (window.App && App.updateCloudAccountBtn) App.updateCloudAccountBtn();
     }
 
     function setMsg(t) {
@@ -146,6 +173,7 @@ const Cloud = (function () {
                 </div>
                 <div id="cloudFormArea"></div>
                 <div id="cloudMsg" class="cloud-msg"></div>
+                <div class="cloud-skip" id="cloudSkip">暂不登录，本地使用 ›</div>
             </div>`;
         const tabs = el.querySelectorAll('.cloud-tab');
         tabs.forEach(t => t.onclick = () => {
@@ -153,6 +181,8 @@ const Cloud = (function () {
             t.classList.add('active');
             renderForm(t.dataset.tab);
         });
+        const skip = document.getElementById('cloudSkip');
+        if (skip) skip.onclick = skipLogin;
         renderForm('pwd');
     }
 
@@ -252,13 +282,18 @@ const Cloud = (function () {
 
     async function signOut() {
         try { await cloud.auth.signOut(); } catch (e) {}
+        userEmail = null;
+        refreshAccountBtn();
         location.reload();
     }
 
     return {
         get enabled() { return enabled; },
+        get isSignedIn() { return enabled && !!userEmail; },
+        get userEmail() { return userEmail; },
         boot,
         push,
-        signOut
+        signOut,
+        openLogin
     };
 })();
