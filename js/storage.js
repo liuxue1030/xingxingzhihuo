@@ -174,6 +174,8 @@ const Storage = {
     saveDB(db) {
         try {
             localStorage.setItem(this.DB_KEY, JSON.stringify(db));
+            // 云端同步：登录态下防抖上传整库（失败静默，不阻塞本地）
+            if (window.Cloud && Cloud.enabled) Cloud.push(db);
             return true;
         } catch (e) {
             // 通常是 localStorage 配额超限（QuotaExceededError）

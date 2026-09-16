@@ -81,6 +81,8 @@ const App = {
     },
 
     logout() {
+        // 已接入云端账号：退出即退出云端账号（返回账号登录页）；本地模式则仅切换孩子
+        if (window.Cloud && Cloud.enabled) { Cloud.signOut(); return; }
         Storage.logout();
         this.showLoginScreen();
     },
@@ -6653,4 +6655,10 @@ const App = {
 };
 
 // 启动应用
-document.addEventListener('DOMContentLoaded', () => App.init());
+document.addEventListener('DOMContentLoaded', async () => {
+    // 云端账号门：在注册发布域名下，先确保登录并同步数据，再进入应用
+    if (window.Cloud) {
+        try { await Cloud.boot(); } catch (e) { console.error('云端启动失败，转本地模式', e); }
+    }
+    App.init();
+});
