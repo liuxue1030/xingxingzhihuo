@@ -230,7 +230,22 @@ const ENGLISH_WORDS = [
     { en: "chameleon", zh: "变色龙" },
     { en: "colourful", zh: "色彩缤纷的" },
     { en: "plant", zh: "植物" },
-    { en: "zoo", zh: "动物园" }
+    { en: "zoo", zh: "动物园" },
+
+    // 自然拼读与形容词 (2026-09-16 新增)
+    { en: "hat", zh: "帽子" },
+    { en: "cat", zh: "猫" },
+    { en: "fat", zh: "胖的" },
+    { en: "cap", zh: "鸭舌帽" },
+    { en: "map", zh: "地图" },
+    { en: "nap", zh: "小睡" },
+    { en: "touch", zh: "触摸" },
+    { en: "hard", zh: "硬的" },
+    { en: "soft", zh: "软的" },
+    { en: "thin", zh: "薄的" },
+    { en: "thick", zh: "厚的" },
+    { en: "kitten", zh: "小猫" },
+    { en: "ball", zh: "球" }
 ];
 
 // ===== 英语短句库 (270条) =====
@@ -1850,7 +1865,8 @@ const DEFAULT_CHECKIN_CATEGORIES = [
             { name: "课外阅读", stars: 2 },
             { name: "课后作业", stars: 3 },
             { name: "做一套试卷", stars: 5 },
-            { name: "汉字字帖", stars: 2 }
+            { name: "汉字字帖", stars: 2 },
+            { name: "听写全队", stars: 2 }
         ]
     },
     {
@@ -1858,7 +1874,8 @@ const DEFAULT_CHECKIN_CATEGORIES = [
             { name: "课后作业", stars: 3 },
             { name: "英语绘本5本", stars: 3 },
             { name: "做一套试卷", stars: 5 },
-            { name: "英文字帖", stars: 2 }
+            { name: "英文字帖", stars: 2 },
+            { name: "一起作业APP", stars: 2 }
         ]
     },
     {
