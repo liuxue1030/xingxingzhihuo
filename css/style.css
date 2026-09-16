@@ -2070,6 +2070,19 @@ input[type="file"] {
     color: #999;
 }
 
+.exchange-record-locked {
+    font-size: 16px;
+    opacity: .55;
+    flex-shrink: 0;
+}
+
+.exchange-manage-tip {
+    font-size: 12px;
+    color: #888;
+    margin: 4px 0 12px;
+    line-height: 1.5;
+}
+
 .btn-sm {
     min-height: 28px;
     font-size: 12px;

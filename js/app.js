@@ -5680,24 +5680,18 @@ const App = {
             html += `</div>`;
         }
 
-        // 兑换记录（仅当日可撤销，历史记录按钮置灰）
+        // 兑换记录（兑换后不可撤销，仅展示历史；撤销由家长在后台操作）
         if (exchangeRecords.length > 0) {
-            const todayStr = Storage.todayStr();
             const recentRecords = exchangeRecords.slice().reverse();
             html += `<div class="exchange-history">
-                <div class="exchange-history-title">📋 兑换记录（仅当日可撤销）</div>`;
+                <div class="exchange-history-title">📋 兑换记录（兑换后不可撤销）</div>`;
             recentRecords.forEach(rec => {
-                const realIdx = exchangeRecords.indexOf(rec);
-                const isToday = rec.date === todayStr;
-                const undoBtn = isToday
-                    ? `<button class="btn btn-outline btn-sm" data-undo-idx="${realIdx}">撤销</button>`
-                    : `<button class="btn btn-outline btn-sm" disabled style="opacity:.4;cursor:not-allowed;">不可撤销</button>`;
                 html += `<div class="exchange-record-item">
                     <div class="exchange-record-info">
                         <span class="exchange-record-name">${rec.productName}</span>
                         <span class="exchange-record-meta">${rec.date} · ⭐${rec.cost}</span>
                     </div>
-                    ${undoBtn}
+                    <span class="exchange-record-locked" title="兑换后不可撤销，如需撤销请联系家长">🔒</span>
                 </div>`;
             });
             html += `</div>`;
@@ -5735,31 +5729,7 @@ const App = {
             });
         });
 
-        // 撤销兑换按钮
-        document.querySelectorAll('button[data-undo-idx]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const idx = parseInt(btn.dataset.undoIdx);
-                const records = Storage.getExchangeRecords();
-                const rec = records[idx];
-                if (!rec) return;
-                this.showConfirm(
-                    `确定撤销兑换「${rec.productName}」？\n退还 ${rec.cost} 颗星星`,
-                    () => {
-                        const result = Storage.undoExchange(null, idx);
-                        if (result.success) {
-                            this.updateSidebarInfo();
-                            this.showToast('已撤销，退还' + rec.cost + '颗星');
-                            this.renderMall();
-                        } else {
-                            this.showToast(result.reason === 'storage_error' ? '存储空间不足，无法撤销' : '撤销失败');
-                        }
-                    },
-                    '确定撤销',
-                    '取消'
-                );
-            });
-        });
-    },
+        },
 
     // ========================================================
     // 模块七：家长设置
@@ -5829,6 +5799,9 @@ const App = {
                 <h3 class="settings-section-title">🎁 商城奖品管理</h3>
                 <div class="settings-item" onclick="App.renderProductManage()">
                     <span>🛍️ 管理奖品</span><span>▶</span>
+                </div>
+                <div class="settings-item" onclick="App.renderExchangeManage()">
+                    <span>↩️ 撤销兑换记录（退还星星）</span><span>▶</span>
                 </div>
             </div>`;
 
@@ -6091,6 +6064,73 @@ const App = {
             }
 
             document.getElementById('main-content').innerHTML = html;
+        });
+    },
+
+    // 家长后台：撤销兑换记录（退还星星）
+    renderExchangeManage(childId) {
+        this.navigateSub(() => {
+            const children = Storage.getDB().children;
+            childId = childId || Storage.getCurrentChildId();
+            const child = children.find(c => c.id === childId) || children[0];
+
+            let sel = `<select id="exChildSel" class="form-input" style="margin-bottom:12px;">`;
+            children.forEach(c => {
+                sel += `<option value="${c.id}" ${c.id === child.id ? 'selected' : ''}>${c.avatar} ${c.nickname}</option>`;
+            });
+            sel += `</select>`;
+
+            const records = Storage.getExchangeRecords(child.id).slice().reverse();
+            let list = '';
+            if (records.length === 0) {
+                list = `<div class="empty-state">暂无兑换记录</div>`;
+            } else {
+                records.forEach((rec, i) => {
+                    const realIdx = Storage.getExchangeRecords(child.id).length - 1 - i;
+                    list += `<div class="exchange-record-item">
+                        <div class="exchange-record-info">
+                            <span class="exchange-record-name">${rec.productName}</span>
+                            <span class="exchange-record-meta">${rec.date} · ⭐${rec.cost}</span>
+                        </div>
+                        <button class="btn btn-outline btn-sm" data-ex-undo="${realIdx}">撤销退还</button>
+                    </div>`;
+                });
+            }
+
+            let html = `<h1 class="page-title">↩️ 撤销兑换记录</h1>
+                <p class="exchange-manage-tip">选择孩子，可撤销其<b>任一</b>兑换记录并退还星星（孩子端不可撤销）</p>
+                ${sel}
+                <div class="exchange-history">
+                    <div class="exchange-history-title">📋 ${child.avatar} ${child.nickname} 的兑换记录（共 ${records.length} 条）</div>
+                    ${list}
+                </div>`;
+            document.getElementById('main-content').innerHTML = html;
+
+            document.getElementById('exChildSel').onchange = (e) => {
+                this.renderExchangeManage(e.target.value);
+            };
+
+            document.querySelectorAll('button[data-ex-undo]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.exUndo);
+                    const rec = Storage.getExchangeRecords(child.id)[idx];
+                    if (!rec) return;
+                    this.showConfirm(
+                        `确定撤销兑换「${rec.productName}」？\n将退还 ${rec.cost} 颗星星`,
+                        () => {
+                            const result = Storage.undoExchange(child.id, idx);
+                            if (result.success) {
+                                this.showToast('已撤销，退还 ' + rec.cost + ' 颗星');
+                                this.renderExchangeManage(child.id);
+                            } else {
+                                this.showToast(result.reason === 'storage_error' ? '存储空间不足，无法撤销' : '撤销失败');
+                            }
+                        },
+                        '确定撤销',
+                        '取消'
+                    );
+                });
+            });
         });
     },
 
