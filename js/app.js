@@ -565,6 +565,7 @@ const App = {
             html += `<div class="streak-dot ${checked ? 'checked' : ''}">${d.getDate()}</div>`;
         }
         html += `</div></div>`;
+        html += `<div class="checkin-tip">忘记打卡？可请家长在「家长设置 → 补卡」补录历史日期 ✅</div>`;
 
         // 竖排分类 + 打卡列表
         const activeCat = this.currentCheckinCat || 0;
@@ -5792,6 +5793,9 @@ const App = {
                 <div class="settings-item" onclick="App.renderCheckinManage()">
                     <span>📋 管理打卡分类与任务</span><span>▶</span>
                 </div>
+                <div class="settings-item" onclick="App.renderBackCheckin()">
+                    <span>🗓️ 补卡（补录历史打卡）</span><span>▶</span>
+                </div>
             </div>`;
 
             // 商城管理
@@ -6026,6 +6030,89 @@ const App = {
             this.closeModal();
             this.renderCheckinManage();
         };
+    },
+
+    // 家长后台：补录 / 撤销历史打卡
+    renderBackCheckin(childId, targetDate) {
+        this.navigateSub(() => {
+            const children = Storage.getDB().children;
+            childId = childId || Storage.getCurrentChildId();
+            const child = children.find(c => c.id === childId) || children[0];
+            const cats = Storage.getCheckinCategories(child.id);
+
+            const today = Storage.todayStr();
+            const yesterday = Storage.dateStr(new Date(Date.now() - 86400000));
+            const minDate = Storage.dateStr(new Date(Date.now() - 30 * 86400000));
+            targetDate = targetDate || yesterday;
+
+            let sel = `<select id="bcChildSel" class="form-input" style="margin-bottom:10px;">`;
+            children.forEach(c => {
+                sel += `<option value="${c.id}" ${c.id === child.id ? 'selected' : ''}>${c.avatar} ${c.nickname}</option>`;
+            });
+            sel += `</select>`;
+
+            const datePicker = `<input type="date" id="bcDate" class="form-input" value="${targetDate}" min="${minDate}" max="${today}" style="margin-bottom:12px;">`;
+
+            const rec = (Storage.getChildData(child.id).checkinRecords[targetDate]) || {};
+            let list = '';
+            if (cats.length === 0) {
+                list = `<div class="empty-state">暂无打卡任务</div>`;
+            } else {
+                cats.forEach((cat, ci) => {
+                    if (!cat.items || cat.items.length === 0) return;
+                    list += `<div class="bc-cat-title">${cat.icon} ${cat.name}</div>`;
+                    cat.items.forEach((item, ii) => {
+                        const key = `${cat.name}-${item.name}`;
+                        const checked = !!rec[key];
+                        list += `<label class="bc-task">
+                            <input type="checkbox" data-cat="${ci}" data-item="${ii}" ${checked ? 'checked' : ''}>
+                            <span>${item.name} <b>+${item.stars}⭐</b></span>
+                            ${checked ? '<span class="bc-done">已打卡</span>' : ''}
+                        </label>`;
+                    });
+                });
+            }
+
+            const isPast = targetDate < today;
+            let html = `<h1 class="page-title">🗓️ 补卡</h1>
+                <p class="exchange-manage-tip">选择孩子与日期，勾选其<b>当天实际完成</b>的任务即可补录（按所选日期发星并计入连续天数）。仅家长可操作，防刷星。</p>
+                ${sel}
+                ${datePicker}
+                <div class="bc-warn">📅 ${isPast ? '补卡日期：' + targetDate + '（历史日期）' : '当天打卡请直接在「今日打卡」完成'}</div>
+                <div class="bc-list">${list}</div>
+                <button class="btn btn-primary btn-block mt-8" id="bcSave">保存补卡</button>`;
+            document.getElementById('main-content').innerHTML = html;
+
+            document.getElementById('bcChildSel').onchange = (e) => this.renderBackCheckin(e.target.value, targetDate);
+            document.getElementById('bcDate').onchange = (e) => this.renderBackCheckin(child.id, e.target.value);
+
+            document.getElementById('bcSave').onclick = () => {
+                const curRec = Storage.getChildData(child.id).checkinRecords[targetDate] || {};
+                let changed = 0, gained = 0, refunded = 0;
+                document.querySelectorAll('#main-content input[type=checkbox][data-cat]').forEach(cb => {
+                    const ci = parseInt(cb.dataset.cat), ii = parseInt(cb.dataset.item);
+                    const item = cats[ci].items[ii];
+                    const key = `${cats[ci].name}-${item.name}`;
+                    const want = cb.checked, has = !!curRec[key];
+                    if (want && !has) {
+                        const r = Storage.doBackCheckin(child.id, ci, ii, targetDate);
+                        if (r.success) { changed++; gained += item.stars; }
+                    } else if (!want && has) {
+                        const r = Storage.undoBackCheckin(child.id, ci, ii, targetDate);
+                        if (r.success) { changed++; refunded += item.stars; }
+                    }
+                });
+                if (changed === 0) this.showToast('没有变动');
+                else {
+                    let msg = `已保存：${changed} 项变动`;
+                    if (gained) msg += `，发星 +${gained}`;
+                    if (refunded) msg += `，退回 -${refunded}`;
+                    this.showToast(msg);
+                    this.updateSidebarInfo();
+                }
+                this.renderBackCheckin(child.id, targetDate);
+            };
+        });
     },
 
     deleteItem(ci, ii) {

@@ -429,6 +429,82 @@ const Storage = {
         return true;
     },
 
+    // 家长补卡：按指定历史日期补录打卡（发星 + 计入连续天数）
+    doBackCheckin(childId, categoryIdx, itemIdx, targetDate) {
+        const data = this.getChildData(childId);
+        const cat = data.checkinCategories[categoryIdx];
+        if (!cat || !cat.items[itemIdx]) return { success: false, reason: 'not_found' };
+        const item = cat.items[itemIdx];
+        const key = `${cat.name}-${item.name}`;
+
+        if (!data.checkinRecords[targetDate]) data.checkinRecords[targetDate] = {};
+        if (data.checkinRecords[targetDate][key]) return { success: false, reason: 'done' };
+
+        data.checkinRecords[targetDate][key] = true;
+        data.stars += item.stars;
+        data.starLedger.push({
+            date: targetDate,
+            timestamp: Date.now(),
+            type: 'checkin',
+            label: '补卡',
+            taskName: key,
+            amount: item.stars,
+            balance: data.stars
+        });
+        this.recomputeCheckinStreak(childId, key);
+        this.saveChildData(childId, data);
+        return { success: true, newBalance: data.stars };
+    },
+
+    // 家长撤销补卡（按指定历史日期回退，扣回星星）
+    undoBackCheckin(childId, categoryIdx, itemIdx, targetDate) {
+        const data = this.getChildData(childId);
+        const cat = data.checkinCategories[categoryIdx];
+        if (!cat || !cat.items[itemIdx]) return { success: false, reason: 'not_found' };
+        const item = cat.items[itemIdx];
+        const key = `${cat.name}-${item.name}`;
+
+        if (!data.checkinRecords[targetDate] || !data.checkinRecords[targetDate][key]) return { success: false, reason: 'not_found' };
+        delete data.checkinRecords[targetDate][key];
+        if (Object.keys(data.checkinRecords[targetDate]).length === 0) delete data.checkinRecords[targetDate];
+
+        data.stars -= item.stars;
+        for (let i = data.starLedger.length - 1; i >= 0; i--) {
+            if (data.starLedger[i].date === targetDate &&
+                data.starLedger[i].type === 'checkin' &&
+                data.starLedger[i].taskName === key) {
+                data.starLedger.splice(i, 1);
+                break;
+            }
+        }
+        let bal = 0;
+        data.starLedger.forEach(e => { bal += e.amount; e.balance = bal; });
+        this.recomputeCheckinStreak(childId, key);
+        this.saveChildData(childId, data);
+        return { success: true, newBalance: data.stars };
+    },
+
+    // 从 checkinRecords 重算某任务的连续天数（避免补卡破坏现有连续记录）
+    recomputeCheckinStreak(childId, key) {
+        const data = this.getChildData(childId);
+        const dates = [];
+        for (const [date, recs] of Object.entries(data.checkinRecords)) {
+            if (recs[key]) dates.push(date);
+        }
+        if (dates.length === 0) {
+            data.checkinStreak[key] = { count: 0, lastDate: null };
+            return;
+        }
+        dates.sort();
+        const last = dates[dates.length - 1];
+        let count = 1;
+        for (let i = dates.length - 2; i >= 0; i--) {
+            if (dates[i] === this.addDays(dates[i + 1], -1)) count++;
+            else break;
+        }
+        data.checkinStreak[key] = { count, lastDate: last };
+    },
+
     getTodayCheckins(childId) {
         const data = this.getChildData(childId);
         const today = this.todayStr();
