@@ -5420,7 +5420,8 @@ const App = {
             { label: '20分钟', sec: 1200 },
             { label: '30分钟', sec: 1800 },
             { label: '45分钟', sec: 2700 },
-            { label: '60分钟', sec: 3600 }
+            { label: '60分钟', sec: 3600 },
+            { label: '90分钟', sec: 5400 }
         ];
 
         let optHtml = '';
