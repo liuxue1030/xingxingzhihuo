@@ -6208,6 +6208,7 @@ const App = {
                             const result = Storage.undoExchange(child.id, idx);
                             if (result.success) {
                                 this.showToast('已撤销，退还 ' + rec.cost + ' 颗星');
+                                this.updateSidebarInfo();
                                 this.renderExchangeManage(child.id);
                             } else {
                                 this.showToast(result.reason === 'storage_error' ? '存储空间不足，无法撤销' : '撤销失败');
