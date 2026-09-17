@@ -1821,6 +1821,48 @@ ________，雨不停地下着。
 森林里的野猪啦，小鹿啦，兔子啦，看见狐狸大摇大摆地走过来，跟往常很不一样，都很纳闷。再往狐狸身后一看，呀，一只大老虎！大大小小的野兽吓得撒腿就跑。
 老虎信以为真。其实他受骗了。原来，狐狸是借着老虎的威风把百兽吓跑的。`, isGarden: true },
     ]},
+    { unit: "写字表", lessons: [
+        { title: "写字表", content: `（共250个字）
+
+【阅读】
+第1课　<ruby>两<rt>liǎng</rt></ruby> <ruby>条<rt>tiáo</rt></ruby> <ruby>哪<rt>nǎ</rt></ruby> <ruby>宽<rt>kuān</rt></ruby> <ruby>那<rt>nà</rt></ruby> <ruby>短<rt>duǎn</rt></ruby> <ruby>孩<rt>hái</rt></ruby> <ruby>成<rt>chéng</rt></ruby>
+第2课　<ruby>升<rt>shēng</rt></ruby> <ruby>连<rt>lián</rt></ruby> <ruby>起<rt>qǐ</rt></ruby> <ruby>海<rt>hǎi</rt></ruby> <ruby>洋<rt>yáng</rt></ruby> <ruby>许<rt>xǔ</rt></ruby> <ruby>作<rt>zuò</rt></ruby> <ruby>法<rt>fǎ</rt></ruby>
+第3课　<ruby>如<rt>rú</rt></ruby> <ruby>果<rt>guǒ</rt></ruby> <ruby>已<rt>yǐ</rt></ruby> <ruby>经<rt>jīng</rt></ruby> <ruby>别<rt>bié</rt></ruby> <ruby>轻<rt>qīng</rt></ruby> <ruby>发<rt>fā</rt></ruby> <ruby>胆<rt>dǎn</rt></ruby> <ruby>肚<rt>dù</rt></ruby> <ruby>识<rt>shí</rt></ruby>
+语文园地一：<ruby>转<rt>zhuǎn</rt></ruby> <ruby>夹<rt>jiā</rt></ruby>
+【识字】
+识字1　<ruby>处<rt>chù</rt></ruby> <ruby>块<rt>kuài</rt></ruby> <ruby>座<rt>zuò</rt></ruby> <ruby>园<rt>yuán</rt></ruby> <ruby>群<rt>qún</rt></ruby> <ruby>队<rt>duì</rt></ruby> <ruby>领<rt>lǐng</rt></ruby>
+识字2　<ruby>树<rt>shù</rt></ruby> <ruby>之<rt>zhī</rt></ruby> <ruby>杨<rt>yáng</rt></ruby> <ruby>松<rt>sōng</rt></ruby> <ruby>柏<rt>bǎi</rt></ruby> <ruby>化<rt>huà</rt></ruby> <ruby>金<rt>jīn</rt></ruby> <ruby>桂<rt>guì</rt></ruby>
+识字3　<ruby>拍<rt>pāi</rt></ruby> <ruby>世<rt>shì</rt></ruby> <ruby>界<rt>jiè</rt></ruby> <ruby>彩<rt>cǎi</rt></ruby> <ruby>丛<rt>cóng</rt></ruby> <ruby>休<rt>xiū</rt></ruby> <ruby>朋<rt>péng</rt></ruby> <ruby>友<rt>yǒu</rt></ruby> <ruby>保<rt>bǎo</rt></ruby> <ruby>护<rt>hù</rt></ruby>
+识字4　<ruby>季<rt>jì</rt></ruby> <ruby>肥<rt>féi</rt></ruby> <ruby>农<rt>nóng</rt></ruby> <ruby>事<rt>shì</rt></ruby> <ruby>谷<rt>gǔ</rt></ruby> <ruby>体<rt>tǐ</rt></ruby> <ruby>辛<rt>xīn</rt></ruby> <ruby>苦<rt>kǔ</rt></ruby> <ruby>初<rt>chū</rt></ruby> <ruby>年<rt>nián</rt></ruby>
+语文园地二：<ruby>丑<rt>chǒu</rt></ruby> <ruby>诚<rt>chéng</rt></ruby>
+【阅读】
+第4课　<ruby>丽<rt>lì</rt></ruby> <ruby>提<rt>tí</rt></ruby> <ruby>吗<rt>ma</rt></ruby> <ruby>圆<rt>yuán</rt></ruby> <ruby>哥<rt>gē</rt></ruby> <ruby>秋<rt>qiū</rt></ruby> <ruby>挂<rt>guà</rt></ruby> <ruby>啊<rt>a</rt></ruby>
+第5课　<ruby>宝<rt>bǎo</rt></ruby> <ruby>玩<rt>wán</rt></ruby> <ruby>活<rt>huó</rt></ruby> <ruby>些<rt>xiē</rt></ruby> <ruby>总<rt>zǒng</rt></ruby> <ruby>给<rt>gěi</rt></ruby> <ruby>诉<rt>sù</rt></ruby> <ruby>曲<rt>qǔ</rt></ruby> <ruby>名<rt>míng</rt></ruby> <ruby>香<rt>xiāng</rt></ruby>
+第6课　<ruby>数<rt>shǔ</rt></ruby> <ruby>晚<rt>wǎn</rt></ruby> <ruby>奶<rt>nǎi</rt></ruby> <ruby>您<rt>nín</rt></ruby> <ruby>爷<rt>yé</rt></ruby> <ruby>很<rt>hěn</rt></ruby> <ruby>变<rt>biàn</rt></ruby> <ruby>勺<rt>sháo</rt></ruby> <ruby>张<rt>zhāng</rt></ruby> <ruby>汉<rt>hàn</rt></ruby>
+语文园地三：<ruby>图<rt>tú</rt></ruby> <ruby>泥<rt>ní</rt></ruby> <ruby>铁<rt>tiě</rt></ruby> <ruby>环<rt>huán</rt></ruby>
+第7课　<ruby>依<rt>yī</rt></ruby> <ruby>尽<rt>jìn</rt></ruby> <ruby>穷<rt>qióng</rt></ruby> <ruby>层<rt>céng</rt></ruby> <ruby>照<rt>zhào</rt></ruby> <ruby>炉<rt>lú</rt></ruby> <ruby>烟<rt>yān</rt></ruby> <ruby>川<rt>chuān</rt></ruby> <ruby>直<rt>zhí</rt></ruby> <ruby>银<rt>yín</rt></ruby>
+第8课　<ruby>仙<rt>xiān</rt></ruby> <ruby>顶<rt>dǐng</rt></ruby> <ruby>巨<rt>jù</rt></ruby> <ruby>位<rt>wèi</rt></ruby> <ruby>闪<rt>shǎn</rt></ruby> <ruby>狗<rt>gǒu</rt></ruby> <ruby>形<rt>xíng</rt></ruby> <ruby>状<rt>zhuàng</rt></ruby>
+第9课　<ruby>湖<rt>hú</rt></ruby> <ruby>区<rt>qū</rt></ruby> <ruby>胜<rt>shèng</rt></ruby> <ruby>岛<rt>dǎo</rt></ruby> <ruby>弯<rt>wān</rt></ruby> <ruby>现<rt>xiàn</rt></ruby> <ruby>就<rt>jiù</rt></ruby> <ruby>外<rt>wài</rt></ruby>
+第10课　<ruby>份<rt>fèn</rt></ruby> <ruby>枝<rt>zhī</rt></ruby> <ruby>客<rt>kè</rt></ruby> <ruby>城<rt>chéng</rt></ruby> <ruby>市<rt>shì</rt></ruby> <ruby>孔<rt>kǒng</rt></ruby> <ruby>钉<rt>dīng</rt></ruby> <ruby>味<rt>wèi</rt></ruby>
+语文园地四：<ruby>号<rt>hào</rt></ruby> <ruby>丰<rt>fēng</rt></ruby>
+第11课　<ruby>观<rt>guān</rt></ruby> <ruby>呀<rt>ya</rt></ruby> <ruby>答<rt>dá</rt></ruby> <ruby>话<rt>huà</rt></ruby> <ruby>抬<rt>tái</rt></ruby> <ruby>能<rt>néng</rt></ruby> <ruby>信<rt>xìn</rt></ruby>
+第12课　<ruby>阵<rt>zhèn</rt></ruby> <ruby>做<rt>zuò</rt></ruby> <ruby>冻<rt>dòng</rt></ruby> <ruby>第<rt>dì</rt></ruby> <ruby>像<rt>xiàng</rt></ruby> <ruby>冷<rt>lěng</rt></ruby> <ruby>冰<rt>bīng</rt></ruby> <ruby>亮<rt>liàng</rt></ruby>
+第13课　<ruby>种<rt>zhǒng</rt></ruby> <ruby>棵<rt>kē</rt></ruby> <ruby>以<rt>yǐ</rt></ruby> <ruby>次<rt>cì</rt></ruby> <ruby>想<rt>xiǎng</rt></ruby> <ruby>邻<rt>lín</rt></ruby> <ruby>居<rt>jū</rt></ruby> <ruby>吧<rt>ba</rt></ruby> <ruby>奇<rt>qí</rt></ruby> <ruby>怪<rt>guài</rt></ruby>
+语文园地五：<ruby>货<rt>huò</rt></ruby> <ruby>科<rt>kē</rt></ruby>
+第14课　<ruby>楼<rt>lóu</rt></ruby> <ruby>代<rt>dài</rt></ruby> <ruby>穿<rt>chuān</rt></ruby> <ruby>视<rt>shì</rt></ruby> <ruby>利<rt>lì</rt></ruby> <ruby>路<rt>lù</rt></ruby>
+第15课　<ruby>同<rt>tóng</rt></ruby> <ruby>志<rt>zhì</rt></ruby> <ruby>军<rt>jūn</rt></ruby> <ruby>敌<rt>dí</rt></ruby> <ruby>常<rt>cháng</rt></ruby> <ruby>非<rt>fēi</rt></ruby> <ruby>每<rt>měi</rt></ruby> <ruby>战<rt>zhàn</rt></ruby> <ruby>士<rt>shì</rt></ruby> <ruby>戴<rt>dài</rt></ruby>
+第16课　<ruby>难<rt>nán</rt></ruby> <ruby>忘<rt>wàng</rt></ruby> <ruby>民<rt>mín</rt></ruby> <ruby>因<rt>yīn</rt></ruby> <ruby>理<rt>lǐ</rt></ruby> <ruby>串<rt>chuàn</rt></ruby> <ruby>裤<rt>kù</rt></ruby> <ruby>令<rt>lìng</rt></ruby>
+第17课　<ruby>反<rt>fǎn</rt></ruby> <ruby>村<rt>cūn</rt></ruby> <ruby>由<rt>yóu</rt></ruby> <ruby>于<rt>yú</rt></ruby> <ruby>员<rt>yuán</rt></ruby> <ruby>被<rt>bèi</rt></ruby> <ruby>声<rt>shēng</rt></ruby> <ruby>岁<rt>suì</rt></ruby> <ruby>消<rt>xiāo</rt></ruby> <ruby>息<rt>xī</rt></ruby>
+语文园地六：<ruby>抄<rt>chāo</rt></ruby> <ruby>炒<rt>chǎo</rt></ruby>
+第18课　<ruby>绝<rt>jué</rt></ruby> <ruby>灭<rt>miè</rt></ruby> <ruby>舟<rt>zhōu</rt></ruby> <ruby>独<rt>dú</rt></ruby> <ruby>阴<rt>yīn</rt></ruby> <ruby>似<rt>sì</rt></ruby> <ruby>野<rt>yě</rt></ruby> <ruby>低<rt>dī</rt></ruby>
+第19课　<ruby>论<rt>lùn</rt></ruby> <ruby>船<rt>chuán</rt></ruby> <ruby>猫<rt>māo</rt></ruby> <ruby>切<rt>qiè</rt></ruby> <ruby>该<rt>gāi</rt></ruby> <ruby>散<rt>sàn</rt></ruby> <ruby>步<rt>bù</rt></ruby> <ruby>失<rt>shī</rt></ruby>
+第20课　<ruby>要<rt>yào</rt></ruby> <ruby>伙<rt>huǒ</rt></ruby> <ruby>伴<rt>bàn</rt></ruby> <ruby>歌<rt>gē</rt></ruby> <ruby>得<rt>dé</rt></ruby> <ruby>闭<rt>bì</rt></ruby> <ruby>忙<rt>máng</rt></ruby> <ruby>谁<rt>shuí</rt></ruby> <ruby>汽<rt>qì</rt></ruby>
+语文园地七：<ruby>饥<rt>jī</rt></ruby> <ruby>饿<rt>è</rt></ruby> <ruby>宁<rt>níng</rt></ruby> <ruby>库<rt>kù</rt></ruby>
+第21课　<ruby>拿<rt>ná</rt></ruby> <ruby>仔<rt>zǐ</rt></ruby> <ruby>极<rt>jí</rt></ruby> <ruby>送<rt>sòng</rt></ruby> <ruby>椅<rt>yǐ</rt></ruby> <ruby>怎<rt>zěn</rt></ruby> <ruby>拉<rt>lā</rt></ruby> <ruby>收<rt>shōu</rt></ruby> <ruby>接<rt>jiē</rt></ruby>
+第22课　<ruby>纸<rt>zhǐ</rt></ruby> <ruby>抓<rt>zhuā</rt></ruby> <ruby>线<rt>xiàn</rt></ruby> <ruby>吵<rt>chǎo</rt></ruby> <ruby>但<rt>dàn</rt></ruby> <ruby>受<rt>shòu</rt></ruby> <ruby>句<rt>jù</rt></ruby> <ruby>哭<rt>kū</rt></ruby>
+第23课　<ruby>游<rt>yóu</rt></ruby> <ruby>戏<rt>xì</rt></ruby> <ruby>爱<rt>ài</rt></ruby> <ruby>呢<rt>ne</rt></ruby> <ruby>跳<rt>tiào</rt></ruby> <ruby>咱<rt>zán</rt></ruby>
+语文园地八：<ruby>狼<rt>láng</rt></ruby> <ruby>蛇<rt>shé</rt></ruby>` },
+    ]},
     { unit: "词语表", lessons: [
         { title: "词语表", content: `（共236个词）
 
