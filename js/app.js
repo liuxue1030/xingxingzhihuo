@@ -2074,30 +2074,26 @@ const App = {
 
     // ========================================================
     // 数独游戏（知识测评子模块）
-    // 每日仅可挑战一次：选规格(四/六/九宫) → 选难度 → 随机3题 → 按正确数给星
+    // 每日仅可挑战一次：选规格(四/六/九宫) → 直接进入困难模式 → 随机1题 → 答对给星
     // ========================================================
     SUDOKU_SIZES: [
         { n: 4, name: '四宫数独', desc: '4×4 · 入门' },
         { n: 6, name: '六宫数独', desc: '6×6 · 进阶' },
         { n: 9, name: '九宫数独', desc: '9×9 · 经典' }
     ],
-    SUDOKU_DIFFS: [
-        { key: 'easy', name: '简单', extra: 0 },
-        { key: 'medium', name: '中等', extra: 1 },
-        { key: 'hard', name: '困难', extra: 2 }
-    ],
-    // 四宫基准星；六宫每级+1，九宫每级+2（由 extra 控制）
-    SUDOKU_BASE_STARS: { easy: 2, medium: 3, hard: 5 },
+    // 仅保留「困难」模式（简单/中等已移除）
+    SUDOKU_DIFF: 'hard',
+    // 四宫基准星；六宫+1，九宫+2
+    SUDOKU_BASE_STARS: 5,
+    SUDOKU_EXTRA: { 4: 0, 6: 1, 9: 2 },
 
-    sudokuStarValue(n, diffKey, correct) {
+    sudokuStarValue(n, correct) {
         if (correct <= 0) return 0;
-        if (correct <= 2) return 1; // 答对 1-2 题鼓励 1 星
-        const extra = ({ 4: 0, 6: 1, 9: 2 })[n] || 0;
-        return (this.SUDOKU_BASE_STARS[diffKey] || 0) + extra; // 全部答对=满星
+        const extra = this.SUDOKU_EXTRA[n] || 0;
+        return this.SUDOKU_BASE_STARS + extra; // 答对即得满星
     },
 
     sudokuSizeName(n) { return ({ 4: '四宫数独', 6: '六宫数独', 9: '九宫数独' })[n] || (n + '宫数独'); },
-    sudokuDiffName(k) { return ({ easy: '简单', medium: '中等', hard: '困难' })[k] || k; },
 
     renderSudokuHome() {
         const done = Storage.hasAssessedToday(null, 'sudoku');
@@ -2111,8 +2107,8 @@ const App = {
             const html = `<h1 class="page-title">🔢 数独游戏</h1>
                 <div class="sd-done-card">
                     <div class="sd-done-badge">今日已完成</div>
-                    <div class="sd-done-mode">${this.esc(rec.sizeName || '')} · ${this.esc(rec.diffName || '')}</div>
-                    <div class="sd-done-correct">答对 ${rec.correct || 0} / 3 题</div>
+                    <div class="sd-done-mode">${this.esc(rec.sizeName || '')}</div>
+                    <div class="sd-done-correct">答对 ${rec.correct || 0} / 1 题</div>
                     <div class="sd-done-stars">${starsStr}</div>
                     <div class="sd-done-tip">每天只能挑战一次，明天再来领取更多星星 🌟</div>
                 </div>
@@ -2120,7 +2116,7 @@ const App = {
             document.getElementById('main-content').innerHTML = html;
             return;
         }
-        // 未挑战：选择规格
+        // 未挑战：选择规格，选完直接进入困难模式测试（仅1题）
         let cards = '';
         this.SUDOKU_SIZES.forEach(s => {
             cards += `<div class="sd-choice-card" data-n="${s.n}">
@@ -2130,54 +2126,31 @@ const App = {
             </div>`;
         });
         const html = `<h1 class="page-title">🔢 数独游戏</h1>
-            <p class="sd-lead">每天仅可挑战一次。先选择规格，再选难度，系统随机出 3 道题。</p>
+            <p class="sd-lead">每天仅可挑战一次。选择规格后直接进入困难模式，系统随机出 1 道题。</p>
             <div class="sd-choice-grid">${cards}</div>`;
         document.getElementById('main-content').innerHTML = html;
         document.querySelectorAll('.sd-choice-card').forEach(c => {
-            c.onclick = () => this.navigateSub(() => this.renderSudokuDifficulty(+c.dataset.n));
-        });
-    },
-
-    renderSudokuDifficulty(n) {
-        const sizeName = this.sudokuSizeName(n);
-        const extra = ({ 4: 0, 6: 1, 9: 2 })[n] || 0;
-        let cards = '';
-        this.SUDOKU_DIFFS.forEach(d => {
-            const stars = this.SUDOKU_BASE_STARS[d.key] + extra;
-            cards += `<div class="sd-choice-card" data-diff="${d.key}">
-                <div class="sd-choice-name">${d.name}</div>
-                <div class="sd-choice-desc">满星 ${stars} ⭐（全对）</div>
-            </div>`;
-        });
-        const html = `<h1 class="page-title">🔢 ${sizeName}</h1>
-            <p class="sd-lead">选择难度。答对 1-2 题得 1 ⭐，全部答对得满星，全错不得星。</p>
-            <div class="sd-choice-grid">${cards}</div>`;
-        document.getElementById('main-content').innerHTML = html;
-        document.querySelectorAll('.sd-choice-card').forEach(c => {
-            c.onclick = () => this.navigateSub(() => this.renderSudokuPlay(n, c.dataset.diff));
+            c.onclick = () => this.navigateSub(() => this.renderSudokuPlay(+c.dataset.n, this.SUDOKU_DIFF));
         });
     },
 
     renderSudokuPlay(n, diffKey) {
         const sizeName = this.sudokuSizeName(n);
-        const diffName = this.sudokuDiffName(diffKey);
         // 标记测评进行中，返回/切换导航时弹出"还未答完，是否退出"
-        this.currentQuiz = { type: 'sudoku', name: '数独游戏-' + sizeName + '-' + diffName };
-        // 随机生成 3 道题
-        const puzzles = [];
-        for (let i = 0; i < 3; i++) puzzles.push(SudokuGen.generatePuzzle(n, diffKey));
-        this._sudokuData = { n: n, diffKey: diffKey, sizeName: sizeName, diffName: diffName, puzzles: puzzles };
+        this.currentQuiz = { type: 'sudoku', name: '数独游戏-' + sizeName + '-' + diffKey };
+        // 随机生成 1 道题（仅困难模式）
+        const puzzles = [SudokuGen.generatePuzzle(n, diffKey)];
+        this._sudokuData = { n: n, diffKey: diffKey, sizeName: sizeName, diffName: diffKey, puzzles: puzzles };
 
         let grids = '';
         puzzles.forEach((p, idx) => {
             grids += `<div class="sd-puzzle">
-                <div class="sd-puzzle-head">第 ${idx + 1} 题</div>
                 ${this.sudokuGridHtml(p.puzzle, idx, n)}
             </div>`;
         });
 
-        const html = `<h1 class="page-title">🔢 ${sizeName} · ${diffName}</h1>
-            <p class="sd-lead">填入空格，完成 3 题后提交。点击已填格可修改。</p>
+        const html = `<h1 class="page-title">🔢 ${sizeName}（困难）</h1>
+            <p class="sd-lead">填入空格，完成后提交。点击已填格可修改。</p>
             <div class="sd-puzzles">${grids}</div>
             <button class="btn btn-primary btn-lg btn-block mt-16" id="sdSubmit">提交测评</button>
             <p class="sd-hint">每天仅一次机会，提交后不可重来，请仔细检查哦～</p>`;
@@ -2239,7 +2212,7 @@ const App = {
         data.puzzles.forEach((puz, i) => {
             if (SudokuGen.isPuzzleCorrect(puz.puzzle, userGrids[i], n)) correct++;
         });
-        const stars = this.sudokuStarValue(n, data.diffKey, correct);
+        const stars = this.sudokuStarValue(n, correct);
 
         // 保存（复用知识测评的星星账本）
         Storage.saveAssessmentResult(null, 'sudoku', {
@@ -2265,20 +2238,19 @@ const App = {
         let starsStr = '';
         for (let i = 0; i < stars; i++) starsStr += '⭐';
         if (stars === 0) starsStr = '<span class="sd-result-nostar">本次未获得星星</span>';
-        const verdict = correct === 3 ? '🎉 全部答对，太厉害了！'
-            : correct === 0 ? '再接再厉，明天继续加油！'
-            : '不错哦，继续练习会更好！';
+        const verdict = correct === 1 ? '🎉 全部答对，太厉害了！'
+            : '再接再厉，明天继续加油！';
         let solutions = '';
         data.puzzles.forEach((puz, i) => {
             solutions += `<div class="sd-puzzle">
-                <div class="sd-puzzle-head">第 ${i + 1} 题 · 解答</div>
+                <div class="sd-puzzle-head">解答</div>
                 ${this.sudokuSolutionHtml(puz.solution, n)}
             </div>`;
         });
         const html = `<h1 class="page-title">🔢 数独成绩单</h1>
             <div class="quiz-result">
-                <div class="result-score">${data.sizeName} · ${data.diffName}</div>
-                <div class="sd-result-correct">答对 ${correct} / 3 题</div>
+                <div class="result-score">${data.sizeName}（困难）</div>
+                <div class="sd-result-correct">答对 ${correct} / 1 题</div>
                 <div class="result-stars">${starsStr}</div>
                 <div class="sd-verdict">${verdict}</div>
                 <div class="sd-solutions-title">完整解答</div>
