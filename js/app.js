@@ -2083,55 +2083,89 @@ const App = {
     ],
     // 仅保留「困难」模式（简单/中等已移除）
     SUDOKU_DIFF: 'hard',
-    // 四宫基准星；六宫+1，九宫+2
-    SUDOKU_BASE_STARS: 5,
-    SUDOKU_EXTRA: { 4: 0, 6: 1, 9: 2 },
+    // 成功提交后对应星星：四宫3 / 六宫4 / 九宫5
+    SUDOKU_STARS: { 4: 3, 6: 4, 9: 5 },
+    // 每日最多挑战次数（提交失败可重试，成功即止）
+    SUDOKU_MAX_ATTEMPTS: 3,
 
     sudokuStarValue(n, correct) {
         if (correct <= 0) return 0;
-        const extra = this.SUDOKU_EXTRA[n] || 0;
-        return this.SUDOKU_BASE_STARS + extra; // 答对即得满星
+        return this.SUDOKU_STARS[n] || 0; // 答对即得对应星星
+    },
+
+    // 数独每日状态（存在当前孩子数据里，按日期隔离，新一天自动重置）
+    getSudokuDaily() {
+        const data = Storage.getChildData(null);
+        return data.sudokuDaily || null;
+    },
+    setSudokuDaily(obj) {
+        const data = Storage.getChildData(null);
+        data.sudokuDaily = obj;
+        Storage.saveChildData(null, data);
     },
 
     sudokuSizeName(n) { return ({ 4: '四宫数独', 6: '六宫数独', 9: '九宫数独' })[n] || (n + '宫数独'); },
 
     renderSudokuHome() {
-        const done = Storage.hasAssessedToday(null, 'sudoku');
-        const rec = done ? Storage.getAssessmentRecord(null, 'sudoku') : null;
-        if (done && rec) {
-            // 今日已完成：展示成绩，不可再战
-            const stars = rec.stars || 0;
+        this.currentQuiz = null;
+        const today = Storage.todayStr();
+        let sd = this.getSudokuDaily();
+        if (!sd || sd.date !== today) sd = null;
+
+        if (sd && sd.success) {
+            // 今日已成功：展示成绩，不可再战
             let starsStr = '';
-            const maxStars = 7;
-            for (let i = 0; i < maxStars; i++) starsStr += i < stars ? '⭐' : '☆';
+            for (let i = 0; i < sd.stars; i++) starsStr += '⭐';
             const html = `<h1 class="page-title">🔢 数独游戏</h1>
                 <div class="sd-done-card">
                     <div class="sd-done-badge">今日已完成</div>
-                    <div class="sd-done-mode">${this.esc(rec.sizeName || '')}</div>
-                    <div class="sd-done-correct">答对 ${rec.correct || 0} / 1 题</div>
+                    <div class="sd-done-mode">${this.esc(sd.sizeName || '')}</div>
+                    <div class="sd-done-correct">答对 ${sd.correct || 0} / 1 题</div>
                     <div class="sd-done-stars">${starsStr}</div>
-                    <div class="sd-done-tip">每天只能挑战一次，明天再来领取更多星星 🌟</div>
+                    <div class="sd-done-tip">今天已成功挑战，明天再来领取更多星星 🌟</div>
                 </div>
                 <button class="btn btn-primary btn-lg btn-block mt-16" onclick="App.navigate('assessment')">返回测评列表</button>`;
             document.getElementById('main-content').innerHTML = html;
             return;
         }
-        // 未挑战：选择规格，选完直接进入困难模式测试（仅1题）
+        if (sd && sd.attempts >= this.SUDOKU_MAX_ATTEMPTS) {
+            // 今日 3 次机会已用完
+            this.renderSudokuExhausted();
+            return;
+        }
+
+        // 未结束：选择规格，选完直接进入困难模式测试（仅1题，每次可任选规格）
+        const used = sd ? sd.attempts : 0;
+        const remain = this.SUDOKU_MAX_ATTEMPTS - used;
         let cards = '';
         this.SUDOKU_SIZES.forEach(s => {
             cards += `<div class="sd-choice-card" data-n="${s.n}">
                 <div class="sd-choice-icon">${s.n === 4 ? '🔲' : (s.n === 6 ? '🔳' : '🟰')}</div>
                 <div class="sd-choice-name">${s.name}</div>
-                <div class="sd-choice-desc">${s.desc}</div>
+                <div class="sd-choice-desc">${s.desc} · ${this.sudokuStarValue(s.n, 1)}⭐</div>
             </div>`;
         });
+        const attemptLabel = used === 0
+            ? '第 1 次挑战（共 3 次机会）'
+            : `第 ${used + 1} 次挑战（剩 ${remain} 次机会）`;
         const html = `<h1 class="page-title">🔢 数独游戏</h1>
-            <p class="sd-lead">每天仅可挑战一次。选择规格后直接进入困难模式，系统随机出 1 道题。</p>
+            <p class="sd-lead">每天最多 3 次机会，答对即止${used > 0 ? '（可重新选择任意规格）' : ''}。选择规格后直接进入困难模式，系统随机出 1 道题。</p>
+            <div class="sd-attempt-tag">${attemptLabel}</div>
             <div class="sd-choice-grid">${cards}</div>`;
         document.getElementById('main-content').innerHTML = html;
         document.querySelectorAll('.sd-choice-card').forEach(c => {
             c.onclick = () => this.navigateSub(() => this.renderSudokuPlay(+c.dataset.n, this.SUDOKU_DIFF));
         });
+    },
+
+    renderSudokuExhausted() {
+        const html = `<h1 class="page-title">🔢 数独游戏</h1>
+            <div class="sd-done-card">
+                <div class="sd-done-badge sd-done-badge-fail">今日机会已用完</div>
+                <div class="sd-done-tip">今天 3 次挑战都未答对，明天再接再厉哦 💪</div>
+            </div>
+            <button class="btn btn-primary btn-lg btn-block mt-16" onclick="App.navigate('assessment')">返回测评列表</button>`;
+        document.getElementById('main-content').innerHTML = html;
     },
 
     renderSudokuPlay(n, diffKey) {
@@ -2205,32 +2239,67 @@ const App = {
         });
         if (unfilled > 0) {
             this.showToast('还有空格没填，先完成所有题目吧～');
-            return;
+            return; // 不完整提交不消耗挑战次数
         }
         // 判题
         let correct = 0;
         data.puzzles.forEach((puz, i) => {
             if (SudokuGen.isPuzzleCorrect(puz.puzzle, userGrids[i], n)) correct++;
         });
+
+        // 读取/初始化今日数独状态
+        const today = Storage.todayStr();
+        let sd = this.getSudokuDaily();
+        if (!sd || sd.date !== today) sd = { date: today, attempts: 0, success: false, stars: 0, correct: 0, sizeName: '' };
+        sd.attempts += 1;
+
         const stars = this.sudokuStarValue(n, correct);
 
-        // 保存（复用知识测评的星星账本）
-        Storage.saveAssessmentResult(null, 'sudoku', {
-            score: correct,
-            stars: stars,
-            correct: correct,
-            sizeName: data.sizeName,
-            diffName: data.diffName
-        }, '数独游戏-' + data.sizeName + '-' + data.diffName);
+        if (correct > 0) {
+            // 成功：记录并只在此刻发星（仅一次）
+            sd.success = true;
+            sd.stars = stars;
+            sd.correct = correct;
+            sd.sizeName = data.sizeName;
+            this.setSudokuDaily(sd);
 
-        this.updateSidebarInfo();
-        this.currentQuiz = null; // 测评已完成，清除进行中标记
-        if (stars > 0) { TTS.playStar(); this.showStarAnimation(); }
-        this.showToast(`答对 ${correct} 题，获得 ${stars} 颗星！`);
+            Storage.saveAssessmentResult(null, 'sudoku', {
+                score: correct,
+                stars: stars,
+                correct: correct,
+                sizeName: data.sizeName,
+                diffName: data.diffName
+            }, '数独游戏-' + data.sizeName);
 
-        // 展示结果（清栈，返回直接回测评列表）
+            this.updateSidebarInfo();
+            this.currentQuiz = null;
+            if (stars > 0) { TTS.playStar(); this.showStarAnimation(); }
+            this.showToast(`答对 ${correct} 题，获得 ${stars} 颗星！`);
+
+            this.subPageStack = [];
+            this.navigateSub(() => this.renderSudokuResult(data, correct, stars));
+            return;
+        }
+
+        // 失败：消耗一次机会
+        if (sd.attempts >= this.SUDOKU_MAX_ATTEMPTS) {
+            sd.success = false;
+            sd.stars = 0;
+            sd.correct = 0;
+            sd.sizeName = data.sizeName;
+            this.setSudokuDaily(sd);
+            this.currentQuiz = null;
+            this.subPageStack = [];
+            this.navigateSub(() => this.renderSudokuExhausted());
+            return;
+        }
+
+        // 还有机会：返回选择页重选规格（不锁定上次）
+        this.setSudokuDaily(sd);
+        this.currentQuiz = null;
+        this.showToast(`这次没答对，还有 ${this.SUDOKU_MAX_ATTEMPTS - sd.attempts} 次机会，换一个规格试试吧～`);
         this.subPageStack = [];
-        this.navigateSub(() => this.renderSudokuResult(data, correct, stars));
+        this.navigateSub(() => this.renderSudokuHome());
     },
 
     renderSudokuResult(data, correct, stars) {
