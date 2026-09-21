@@ -244,7 +244,35 @@ const ENGLISH_WORDS = [
     { en: "thin", zh: "薄的" },
     { en: "thick", zh: "厚的" },
     { en: "kitten", zh: "小猫" },
-    { en: "ball", zh: "球" }
+    { en: "ball", zh: "球" },
+
+    // 身体/五官与家庭称谓 (2026-09-21 新增)
+    { en: "ear", zh: "耳朵" },
+    { en: "nose", zh: "鼻子" },
+    { en: "hand", zh: "手" },
+    { en: "finger", zh: "手指" },
+    { en: "tongue", zh: "舌头" },
+    { en: "mouth", zh: "嘴巴" },
+    { en: "hair", zh: "头发" },
+    { en: "old", zh: "年老的" },
+    { en: "young", zh: "年轻的" },
+    { en: "tall", zh: "高的" },
+    { en: "short", zh: "矮的" },
+    { en: "cute", zh: "可爱的" },
+    { en: "pretty", zh: "漂亮的" },
+    { en: "handsome", zh: "英俊的" },
+    { en: "uncle", zh: "叔叔" },
+    { en: "aunt", zh: "阿姨" },
+    { en: "cousin", zh: "堂/表兄弟姐妹" },
+    { en: "children", zh: "孩子们" },
+    { en: "party", zh: "聚会" },
+    { en: "naughty", zh: "淘气的" },
+    { en: "throw", zh: "扔" },
+    { en: "bone", zh: "骨头" },
+    { en: "jam", zh: "果酱" },
+    { en: "ham", zh: "火腿" },
+    { en: "eat", zh: "吃" },
+    { en: "pan", zh: "平底锅" }
 ];
 
 // ===== 英语短句库 (270条) =====
