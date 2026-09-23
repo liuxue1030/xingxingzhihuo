@@ -8,10 +8,11 @@
     var PIECE_VAL = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 };
     var MATE = 1000000;
 
-    // 棋子字形（黑底实心字形用于双方，靠 CSS 上色区分颜色）
+    // 棋子字形：白棋用空心字形（iOS 上不会渲染成 emoji），黑棋用实心 + 文本变体选择符 \uFE0E
+    // （实心字符 ♟ 等在 iPhone 默认渲染为彩色 emoji，CSS 上色失效 → 白棋看起来也是黑的）
     var GLYPH = {
-        w: { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' },
-        b: { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' }
+        w: { k: '♔', q: '♕', r: '♖', b: '♗', n: '♘', p: '♙' },
+        b: { k: '♚\uFE0E', q: '♛\uFE0E', r: '♜\uFE0E', b: '♝\uFE0E', n: '♞\uFE0E', p: '♟\uFE0E' }
     };
 
     function ChessGame(container, app) {
