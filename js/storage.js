@@ -155,6 +155,7 @@ const Storage = {
             checkinStreak: {},        // { '语文-课外阅读': { count, lastDate } }
             assessmentRecords: {},    // { 'pinyin': { date, score, stars, details, wrongQuestions } }
             examRecords: [],          // [{ date, subject, examType, score, stars, photo }]
+            awardRecords: [],         // [{ date, subject, awardLevel, desc, stars, photo }]
             examHistory: [],
             errorBook: [],           // [{ id, subject, question, wrongAnswer, correctAnswer, analysis, knowledgePoint, reason, difficulty, tags, createdAt, mastered }]
             exchangeRecords: [],      // [{ date, productName, cost }]
@@ -594,6 +595,38 @@ const Storage = {
     getExamRecords(childId) {
         const data = this.getChildData(childId);
         return data.examRecords || [];
+    },
+
+    // ===== 获奖积星 =====
+    saveAwardRecord(childId, record) {
+        const data = this.getChildData(childId);
+        if (!data.awardRecords) data.awardRecords = [];
+        const today = this.todayStr();
+        record.date = today;
+        record.timestamp = Date.now();
+        data.awardRecords.push(record);
+
+        // 发放星星
+        if (record.stars > 0) {
+            data.stars += record.stars;
+            data.starLedger.push({
+                date: today,
+                timestamp: Date.now(),
+                type: 'award',
+                label: `获奖-${record.awardLevel}`,
+                taskName: `${record.subject}-${record.awardLevel}`,
+                amount: record.stars,
+                balance: data.stars
+            });
+        }
+
+        this.saveChildData(childId, data);
+        return true;
+    },
+
+    getAwardRecords(childId) {
+        const data = this.getChildData(childId);
+        return data.awardRecords || [];
     },
 
     // ===== 错题本 =====

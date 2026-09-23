@@ -187,6 +187,7 @@ const App = {
             case 'assessment': this.renderAssessmentList(); break;
             case 'tools': this.renderToolsList(); break;
             case 'exam': this.renderExam(); break;
+            case 'award': this.renderAward(); break;
             case 'mall': this.renderMall(); break;
             case 'focusTimer': this.renderFocusTimer(); break;
         }
@@ -5486,6 +5487,163 @@ const App = {
             ${photoBlock}
         `;
         this.showModal('📝 考试详情', bodyHtml);
+    },
+
+    // ========================================================
+    // 模块六：获奖积星
+    // ========================================================
+    renderAward() {
+        const records = Storage.getAwardRecords();
+        const subjects = ['语文', '数学', '英语', '其他'];
+        const awards = [
+            { key: '一等奖', stars: 100 },
+            { key: '二等奖', stars: 50 },
+            { key: '三等奖', stars: 30 }
+        ];
+
+        let html = `<h1 class="page-title">🥇 获奖积星</h1>
+            <div class="exam-form">
+                <div class="form-group">
+                    <label class="form-label">选择学科</label>
+                    <div class="exam-chips" id="awardSubjectBtns">`;
+        subjects.forEach((s, i) => {
+            html += `<button class="chip ${i===0?'chip-active':''}" data-subject="${s}">${s}</button>`;
+        });
+        html += `</div></div>
+                <div class="form-group">
+                    <label class="form-label">获奖等级</label>
+                    <div class="exam-chips" id="awardLevelBtns">`;
+        awards.forEach((a, i) => {
+            html += `<button class="chip ${i===0?'chip-active':''}" data-level="${a.key}">${a.key}<span style="font-size:11px;color:#999;margin-left:4px;">${a.stars}⭐</span></button>`;
+        });
+        html += `</div></div>
+                <div class="form-group">
+                    <label class="form-label">获奖说明（选填）</label>
+                    <input type="text" class="form-input" id="awardDesc" placeholder="如：校运会跳绳比赛">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">上传获奖照片/证书（选填）</label>
+                    <input type="file" accept="image/*" id="awardPhoto" style="min-height:48px;font-size:16px;">
+                </div>
+                <button class="btn btn-primary btn-block" id="submitAward" style="min-height:40px;font-size:15px;padding:8px;">提交并领取星星</button>
+            </div>`;
+
+        // 奖励规则提示
+        html += `<div class="exam-rules-hint" id="awardRulesHint">💡 点击查看奖励规则</div>`;
+
+        // 历史记录
+        const reversedRecords = records.slice().reverse();
+        html += `<div class="exam-history">
+            <h3 class="section-title">获奖记录</h3>`;
+        if (records.length === 0) {
+            html += this.emptyState('🥇', '暂无获奖记录');
+        } else {
+            reversedRecords.forEach((r, i) => {
+                html += `<div class="exam-history-item exam-record-clickable" id="awardRecItem_${i}">
+                    <div>
+                        <div style="font-size:13px;font-weight:600;">${r.subject} · ${r.awardLevel}</div>
+                        <div style="font-size:11px;color:#999;">${r.date}</div>
+                    </div>
+                    <div class="flex items-center gap-12">
+                        <span class="exam-star-badge">${r.stars > 0 ? `+${r.stars}⭐` : '0⭐'}</span>
+                        <span style="font-size:18px;color:#bbb;">›</span>
+                    </div>
+                </div>`;
+            });
+        }
+        html += `</div>`;
+
+        document.getElementById('main-content').innerHTML = html;
+
+        let selectedSubject = '语文';
+        let selectedLevel = '一等奖';
+        let photoData = null;
+
+        reversedRecords.forEach((r, i) => {
+            const el = document.getElementById(`awardRecItem_${i}`);
+            if (el) el.onclick = () => this.showAwardDetail(r);
+        });
+
+        document.querySelectorAll('#awardSubjectBtns button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#awardSubjectBtns button').forEach(b => b.classList.remove('chip-active'));
+                btn.classList.add('chip-active');
+                selectedSubject = btn.dataset.subject;
+            });
+        });
+
+        document.querySelectorAll('#awardLevelBtns button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#awardLevelBtns button').forEach(b => b.classList.remove('chip-active'));
+                btn.classList.add('chip-active');
+                selectedLevel = btn.dataset.level;
+            });
+        });
+
+        document.getElementById('awardPhoto').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                try {
+                    photoData = await this.compressImage(file, 800, 0.7);
+                } catch (err) {
+                    this.showToast('图片处理失败：' + (err.message || ''));
+                    photoData = null;
+                }
+            }
+        });
+
+        document.getElementById('awardRulesHint').addEventListener('click', () => {
+            let rulesHtml = '';
+            awards.forEach(a => {
+                rulesHtml += `<div class="result-detail-item">
+                    <span>${a.key}</span>
+                    <span style="color:#4CAF50;font-weight:600;">+${a.stars}⭐</span>
+                </div>`;
+            });
+            this.showModal('💡 奖励规则', rulesHtml);
+        });
+
+        document.getElementById('submitAward').onclick = () => {
+            const stars = ({ '一等奖': 100, '二等奖': 50, '三等奖': 30 })[selectedLevel] || 0;
+            const desc = (document.getElementById('awardDesc').value || '').trim();
+            const ok = Storage.saveAwardRecord(null, {
+                subject: selectedSubject,
+                awardLevel: selectedLevel,
+                desc: desc,
+                stars: stars,
+                photo: photoData
+            });
+            if (ok === false) {
+                this.showToast('存储空间不足，请删除旧记录后再试');
+                return;
+            }
+            this.showStarAnimation();
+            this.updateSidebarInfo();
+            this.showToast(`提交成功！获得 ${stars} 颗星！`);
+            this.renderAward();
+        };
+    },
+
+    // 点击获奖记录项查看详情（含照片）
+    showAwardDetail(r) {
+        const photoBlock = r.photo
+            ? `<img src="${r.photo}" style="width:100%;border-radius:8px;display:block;" />`
+            : `<div style="padding:24px 12px;text-align:center;color:#999;font-size:13px;background:#f7f7f7;border-radius:8px;">该记录未保存照片</div>`;
+        const descBlock = r.desc ? `<div style="margin:0 0 12px;font-size:13px;color:#555;">说明：${r.desc}</div>` : '';
+        const bodyHtml = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;">
+                <span><strong style="font-size:15px;">${r.subject}</strong> · ${r.awardLevel}</span>
+                <span style="color:#999;">${r.date}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #eee;">
+                <span style="font-size:15px;font-weight:700;color:#5D4037;">${r.awardLevel}</span>
+                <span class="exam-star-badge">${r.stars > 0 ? `+${r.stars}⭐` : '0⭐'}</span>
+            </div>
+            ${descBlock}
+            <div style="font-size:12px;color:#999;margin-bottom:6px;">获奖照片</div>
+            ${photoBlock}
+        `;
+        this.showModal('🥇 获奖详情', bodyHtml);
     },
 
     // ========================================================
