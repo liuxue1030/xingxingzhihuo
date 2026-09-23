@@ -116,6 +116,15 @@ const App = {
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
                 const page = item.dataset.page;
+                // 国际象棋对局进行中，切换左侧栏分类前先确认，避免误触丢失对局
+                if (this._chess && !this._chess.gameEnded) {
+                    this.showConfirm('对局还未结束，是否退出？', () => {
+                        this._chess = null;
+                        if (page === 'settings') this.openParentSettings();
+                        else this.navigate(page);
+                    }, '是', '否');
+                    return;
+                }
                 // 测评进行中，切换左侧栏分类前先确认，避免误触丢失进度
                 if (this.currentQuiz) {
                     this.showConfirm('还未答完，是否退出？', () => {
@@ -157,6 +166,7 @@ const App = {
         });
         this.pageStack = [];
         this.subPageStack = []; // 清除子页面栈
+        this._chess = null; // 离开国际象棋对局
         this._scrollStack = [];
         this._homeScroll = 0;
         this._stopAllAudio();
@@ -202,7 +212,13 @@ const App = {
         this._scrollStack.push(0);
         document.getElementById('backBtn').onclick = () => {
             if (Storage.isLoggedIn()) {
-                if (this.currentQuiz) {
+                if (this._chess && !this._chess.gameEnded) {
+                    // 国际象棋对局进行中，弹出确认框
+                    this.showConfirm('对局还未结束，是否退出？', () => {
+                        this._chess = null;
+                        this.goBack();
+                    }, '是', '否');
+                } else if (this.currentQuiz) {
                     // 测评进行中，弹出确认框
                     this.showConfirm('还未答完，是否退出？', () => {
                         const isSudoku = this.currentQuiz && this.currentQuiz.type === 'sudoku';
@@ -225,6 +241,7 @@ const App = {
     // 逐级返回子页面
     goBack() {
         this._stopAllAudio();
+        this._chess = null; // 离开国际象棋对局
         // 弹出当前页
         this.subPageStack.pop();
         if (this._scrollStack && this._scrollStack.length) this._scrollStack.pop();
