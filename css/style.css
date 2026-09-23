@@ -58,7 +58,7 @@ body {
     min-height: 100vh;
 }
 
-/* ===== 左侧导航栏 ===== */
+/* ===== 左侧导航栏（可收起/展开） ===== */
 .sidebar {
     width: var(--sidebar-w);
     background: linear-gradient(180deg, #FFD700 0%, #FFC107 100%);
@@ -70,7 +70,33 @@ body {
     bottom: 0;
     z-index: 100;
     box-shadow: 2px 0 12px rgba(0,0,0,0.1);
+    transition: transform .28s ease;
 }
+/* 收起状态：侧栏滑出、主内容占满全宽 */
+#app.sidebar-collapsed .sidebar { transform: translateX(-100%); }
+#app.sidebar-collapsed .main-content { margin-left: 0; }
+
+/* 浮动开关按钮（右下角，永不遮挡左侧栏） */
+.sidebar-toggle-fab {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 300;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: #FFC107;
+    color: #5D4037;
+    font-size: 22px;
+    line-height: 48px;
+    text-align: center;
+    padding: 0;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.sidebar-toggle-fab:active { transform: scale(.93); }
 
 .sidebar-header {
     padding: 14px 10px;
@@ -182,6 +208,7 @@ body {
     min-height: 100vh;
     overflow-x: clip;
     min-width: 0;
+    transition: margin-left .28s ease;
 }
 
 .page-title {

@@ -46,12 +46,17 @@ const App = {
     showLoginScreen() {
         document.getElementById('loginScreen').style.display = 'flex';
         document.getElementById('app').style.display = 'none';
+        const toggleBtn = document.getElementById('sidebarToggle');
+        if (toggleBtn) toggleBtn.style.display = 'none';
         this.renderLoginChildren();
     },
 
     showApp() {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').style.display = '';
+        const toggleBtn = document.getElementById('sidebarToggle');
+        if (toggleBtn) toggleBtn.style.display = '';
+        this.applySidebarState();
         this.navigate('home');
         this.updateSidebarInfo();
     },
@@ -85,6 +90,25 @@ const App = {
         if (window.Cloud && Cloud.enabled) { Cloud.signOut(); return; }
         Storage.logout();
         this.showLoginScreen();
+    },
+
+    // ===== 左侧导航栏收起/展开 =====
+    SIDEBAR_KEY: 'starfire_sidebar_collapsed',
+    applySidebarState() {
+        const appEl = document.getElementById('app');
+        const btn = document.getElementById('sidebarToggle');
+        let collapsed = false;
+        try { collapsed = localStorage.getItem(this.SIDEBAR_KEY) === '1'; } catch (e) {}
+        appEl.classList.toggle('sidebar-collapsed', collapsed);
+        if (btn) btn.textContent = collapsed ? '☰' : '✕'; // 收起时显示展开图标
+    },
+    toggleSidebar() {
+        const appEl = document.getElementById('app');
+        const btn = document.getElementById('sidebarToggle');
+        const collapsed = !appEl.classList.contains('sidebar-collapsed');
+        appEl.classList.toggle('sidebar-collapsed', collapsed);
+        if (btn) btn.textContent = collapsed ? '☰' : '✕';
+        try { localStorage.setItem(this.SIDEBAR_KEY, collapsed ? '1' : '0'); } catch (e) {}
     },
 
     // ===== 导航 =====
