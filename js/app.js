@@ -2641,6 +2641,7 @@ const App = {
             { id: 'worldHistory', icon: '🌍', name: '世界上下五千年' },
             { id: 'chinaHistory', icon: '🏛️', name: '中华上下五千年' },
             { id: 'scienceBoost', icon: '🔬', name: '科学充电站' },
+            { id: 'chess', icon: '♟️', name: '国际象棋' },
             { id: 'errorBook', icon: '📝', name: '错题本' }
         ];
 
@@ -2679,9 +2680,25 @@ const App = {
                     case 'songs': this.navigateSub(() => this.renderSongsHome()); break;
                     case 'cnTextbook': this.renderCnTextbook(); break;
                     case 'errorBook': this.renderErrorBook(); break;
+                    case 'chess': this.renderChess(); break;
                 }
             });
         });
+    },
+
+    // 国际象棋（学习工具 · 应用内嵌引擎，人机对弈）
+    renderChess() {
+        const html = `<h1 class="page-title">♟️ 国际象棋</h1>
+            <p class="chess-lead">人机对弈 · 强度 2 · 随机先手 · 无需登录。进入页面即自动开始一局。</p>
+            <div id="chessWrap"></div>`;
+        document.getElementById('main-content').innerHTML = html;
+        const wrap = document.getElementById('chessWrap');
+        if (typeof ChessGame !== 'undefined') {
+            this._chess = new ChessGame(wrap, this);
+            this._chess.init();
+        } else {
+            wrap.innerHTML = '<p class="chess-fallback">象棋引擎加载失败，请刷新后重试。</p>';
+        }
     },
 
     // ========================================================
