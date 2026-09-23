@@ -8,6 +8,7 @@ const MODULE_MAP = {
     checkin: '今日打卡',
     assessment: '知识测评',
     exam: '考试积星',
+    award: '获奖积星',
     exchange: '星星兑换商城'
 };
 
@@ -989,6 +990,7 @@ const Storage = {
         if (module === '知识测评') return 'assessment';
         if (module === '考试积星') return 'exam';
         if (module === '星星兑换商城') return 'exchange';
+        if (m.indexOf('获奖') >= 0) return 'award';
         return 'checkin';
     },
 
@@ -1066,7 +1068,8 @@ const Storage = {
             assessmentRecords: data.assessmentRecords,
             examRecords: data.examRecords,
             errorBook: data.errorBook,
-            exchangeRecords: data.exchangeRecords
+            exchangeRecords: data.exchangeRecords,
+            awardRecords: data.awardRecords
         };
     },
 
@@ -1141,6 +1144,7 @@ const Storage = {
             if (Array.isArray(obj.examRecords)) data.examRecords = obj.examRecords;
             if (Array.isArray(obj.errorBook)) data.errorBook = obj.errorBook;
             if (Array.isArray(obj.exchangeRecords)) data.exchangeRecords = obj.exchangeRecords;
+            if (Array.isArray(obj.awardRecords)) data.awardRecords = obj.awardRecords;
             if (obj.child.nickname) child.nickname = obj.child.nickname;
             if (obj.child.avatar) child.avatar = obj.child.avatar;
             db.childrenData[child.id] = data;
@@ -1168,6 +1172,7 @@ const Storage = {
         const checkinRecords = {};
         const examRecords = [];
         const assessmentRecords = {};
+        const awardRecords = [];
 
         (parsed.rows || []).forEach(row => {
             const date = this.normalizeDateStr(row.date || '');
@@ -1194,6 +1199,11 @@ const Storage = {
                 examRecords.push({ date: date, timestamp: timestamp, subject: subject, examType: examType, score: Number(row.score) || 0, stars: amount, photo: '' });
             } else if (type === 'assessment') {
                 assessmentRecords[taskName || label] = { date: date, score: 0, stars: amount, details: [], wrongQuestions: [] };
+            } else if (type === 'award') {
+                const parts = (taskName || label || '').split('-');
+                const subject = parts[0] || '';
+                const awardLevel = parts.slice(1).join('-') || '一等奖';
+                awardRecords.push({ date: date, timestamp: timestamp, subject: subject, awardLevel: awardLevel, desc: '', stars: amount, photo: '' });
             }
         });
 
@@ -1214,6 +1224,7 @@ const Storage = {
         data.checkinRecords = checkinRecords;
         data.examRecords = examRecords;
         data.assessmentRecords = assessmentRecords;
+        data.awardRecords = awardRecords;
         data.todayExchangeCount = todayExchangeCount;
 
         const saved = this.saveDB(db);

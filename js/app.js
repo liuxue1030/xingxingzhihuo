@@ -6693,7 +6693,7 @@ const App = {
     // 完整数据导入（JSON恢复）：选择备份文件 → 解析 → 覆盖写入 → 刷新
     importDataForm() {
         this.showConfirm(
-            '导入将覆盖当前站点的数据（孩子信息、星星、打卡、测评、考试、错题本、兑换记录等）。确定继续吗？',
+            '导入将覆盖当前站点的数据（孩子信息、星星、打卡、补卡、测评、考试、获奖、错题本、兑换记录等）。确定继续吗？',
             () => {
                 const input = document.createElement('input');
                 input.type = 'file';
@@ -6740,7 +6740,7 @@ const App = {
             <div style="font-size:15px;margin-bottom:10px;">请选择要导出的孩子：</div>
             <select id="exportChildSelect" class="form-input" style="width:100%;padding:10px;font-size:16px;border-radius:8px;">${options}</select>
             <div style="font-size:12px;color:#999;margin-top:10px;line-height:1.5;">
-                将导出该孩子全部的【星星明细】（按模块分类、单 Sheet），不含孩子信息与余额；撤销/取消的记录不会包含在内。
+                将导出该孩子全部的【星星明细】（含打卡、补卡、测评、考试、获奖、兑换，按模块分类、单 Sheet），不含孩子信息与余额；撤销/取消的记录不会包含在内。
             </div>`;
         const footer = `
             <button class="btn btn-outline" onclick="App.closeModal()">取消</button>
@@ -6792,8 +6792,8 @@ const App = {
             <div style="font-size:15px;margin-bottom:10px;">请选择要导入到的孩子：</div>
             <select id="importChildSelect" class="form-input" style="width:100%;padding:10px;font-size:16px;border-radius:8px;">${options}</select>
             <div style="font-size:12px;color:#999;margin-top:10px;line-height:1.5;">
-                导入将<b>覆盖</b>该孩子全部星星明细、考试记录、兑换记录等，请确认文件正确。<br>
-                试卷照片不会被导入（留空），分数列若存在会被一并导入。
+                导入将<b>覆盖</b>该孩子全部星星明细、打卡、测评、考试、获奖、兑换记录等，请确认文件正确。<br>
+                试卷照片不会被导入（留空），分数列若存在会被一并导入。获奖记录会按科目与等级还原。
             </div>`;
         const footer = `
             <button class="btn btn-outline" onclick="App.closeModal()">取消</button>
