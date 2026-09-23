@@ -6087,9 +6087,6 @@ const App = {
                 <div class="settings-item" onclick="App.exportExcelForm()">
                     <span>📤 导出 Excel（积星/兑换记录）</span><span>▶</span>
                 </div>
-                <div class="settings-item" onclick="App.importExcelForm()">
-                    <span>📥 导入 Excel（覆盖所有记录）</span><span>▶</span>
-                </div>
                 <div class="settings-item" onclick="App.exportDataForm()">
                     <span>📤 完整数据导出（JSON备份）</span><span>▶</span>
                 </div>
@@ -6776,98 +6773,6 @@ const App = {
         this.showToast('Excel 已导出');
     },
 
-    // 导入 Excel（单 Sheet：星星明细），先选孩子再上传，导入到选定孩子名下
-    importExcelForm() {
-        if (typeof XLSX === 'undefined') {
-            this.showToast('Excel 组件未加载，请刷新页面重试');
-            return;
-        }
-        const children = Storage.getDB().children || [];
-        if (children.length === 0) {
-            this.showToast('暂无孩子数据');
-            return;
-        }
-        const options = children.map(c => `<option value="${c.id}">${c.nickname}</option>`).join('');
-        const body = `
-            <div style="font-size:15px;margin-bottom:10px;">请选择要导入到的孩子：</div>
-            <select id="importChildSelect" class="form-input" style="width:100%;padding:10px;font-size:16px;border-radius:8px;">${options}</select>
-            <div style="font-size:12px;color:#999;margin-top:10px;line-height:1.5;">
-                导入将<b>覆盖</b>该孩子全部星星明细、打卡、测评、考试、获奖、兑换记录等，请确认文件正确。<br>
-                试卷照片不会被导入（留空），分数列若存在会被一并导入。获奖记录会按科目与等级还原。
-            </div>`;
-        const footer = `
-            <button class="btn btn-outline" onclick="App.closeModal()">取消</button>
-            <button class="btn btn-primary" id="doImportExcelBtn">选择文件并导入</button>`;
-        this.showModal('导入 Excel', body, footer);
-        document.getElementById('doImportExcelBtn').onclick = () => {
-            const cid = Number(document.getElementById('importChildSelect').value);
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.xlsx,.xls';
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    try {
-                        const wb = XLSX.read(ev.target.result, { type: 'array' });
-                        const parsed = this.parseExcelToData(wb);
-                        if (parsed.rows.length === 0) {
-                            this.showToast('未识别到星星明细，请检查文件');
-                            return;
-                        }
-                        this.showConfirm(
-                            `确定导入并覆盖所选孩子的所有记录吗？\n此操作不可撤销！\n（共 ${parsed.rows.length} 条明细）`,
-                            () => {
-                                const result = Storage.importExcelData(cid, parsed);
-                                if (result.success) {
-                                    this.updateSidebarInfo();
-                                    this.showToast('导入成功，已覆盖该孩子所有记录');
-                                    this.renderParentSettings();
-                                } else {
-                                    this.showToast('导入失败：存储空间不足');
-                                }
-                            },
-                            '确定导入',
-                            '取消'
-                        );
-                    } catch (err) {
-                        console.error(err);
-                        this.showToast('Excel 解析失败，请检查文件格式');
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-            };
-            input.click();
-        };
-    },
-
-    // 解析单 Sheet Excel 为 { rows: [{ date, module, sub, taskName, amount, score, timestamp }] }
-    parseExcelToData(wb) {
-        const result = { rows: [] };
-        // 优先读名为“星星明细”的 Sheet，否则取第一个有数据的 Sheet
-        let ws = wb.Sheets['星星明细'];
-        if (!ws) {
-            const firstName = Object.keys(wb.Sheets || {})[0];
-            ws = firstName ? wb.Sheets[firstName] : null;
-        }
-        if (!ws) return result;
-        const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-        for (let i = 1; i < rows.length; i++) {
-            const row = rows[i];
-            if (row == null || row.length === 0 || !row[0]) continue;
-            result.rows.push({
-                date: row[0] || '',           // 保持原始类型（Date/数字/字符串），交给 normalizeDateStr 处理
-                module: String(row[1] || ''),
-                sub: String(row[2] || ''),
-                taskName: String(row[3] || ''),
-                amount: Number(row[4]) || 0,
-                score: (row[5] !== undefined && row[5] !== null && row[5] !== '') ? Number(row[5]) : '',
-                timestamp: row[6] || ''       // 保持原始类型，交给 parseTimestamp 处理
-            });
-        }
-        return result;
-    },
     // ========================================================
     // 模块：中华历史科普（学习工具）
     // ========================================================

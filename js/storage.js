@@ -979,21 +979,6 @@ const Storage = {
         return MODULE_MAP[type] || '其它';
     },
 
-    // 根据模块名/子类/说明推断 type（Excel 导入时路由到对应模块）
-    typeFromModule(module, sub, taskName) {
-        const m = (module || '') + ' ' + (sub || '') + ' ' + (taskName || '');
-        if (m.indexOf('兑换') >= 0) return 'exchange';
-        if (m.indexOf('考试') >= 0 || m.indexOf('学科') >= 0) return 'exam';
-        if (m.indexOf('测评') >= 0) return 'assessment';
-        if (m.indexOf('打卡') >= 0) return 'checkin';
-        if (module === '今日打卡') return 'checkin';
-        if (module === '知识测评') return 'assessment';
-        if (module === '考试积星') return 'exam';
-        if (module === '星星兑换商城') return 'exchange';
-        if (m.indexOf('获奖') >= 0) return 'award';
-        return 'checkin';
-    },
-
     // 时间戳 -> 可读 "YYYY-MM-DD HH:mm"
     formatTimestamp(ts) {
         if (!ts) return '';
@@ -1156,79 +1141,6 @@ const Storage = {
         }
 
         return { success: false, reason: 'invalid', msg: '不是星星之火的备份文件' };
-    },
-
-    // 从 Excel 单 Sheet 解析结果覆盖当前孩子的所有记录
-    // parsed.rows: [{ date, module, sub, taskName, amount, timestamp }]
-    // 自动按 module 路由到对应模块，重建 starLedger + 各模块记录
-    importExcelData(childId, parsed) {
-        const db = this.getDB();
-        if (!childId) childId = db.currentChildId;
-        const data = db.childrenData[childId];
-        if (!data) return { success: false, reason: 'no_child' };
-
-        const ledger = [];
-        const exchangeRecords = [];
-        const checkinRecords = {};
-        const examRecords = [];
-        const assessmentRecords = {};
-        const awardRecords = [];
-
-        (parsed.rows || []).forEach(row => {
-            const date = this.normalizeDateStr(row.date || '');
-            if (!date) return; // 跳过空行
-            const module = String(row.module || '');
-            const sub = String(row.sub || '');
-            const taskName = String(row.taskName || '');
-            const amount = Number(row.amount) || 0;
-            const timestamp = this.parseTimestamp(row.timestamp);
-            const type = this.typeFromModule(module, sub, taskName);
-            const label = sub || module || '其它';
-
-            ledger.push({ date: date, timestamp: timestamp, type: type, label: label, taskName: taskName, amount: amount, balance: 0, score: (type === 'exam') ? (Number(row.score) || 0) : '' });
-
-            if (type === 'exchange') {
-                exchangeRecords.push({ date: date, timestamp: timestamp, productName: taskName || '奖品', cost: Math.abs(amount) });
-            } else if (type === 'checkin') {
-                if (!checkinRecords[date]) checkinRecords[date] = {};
-                checkinRecords[date][taskName || label] = true;
-            } else if (type === 'exam') {
-                const parts = taskName.split('-');
-                const subject = parts[0] || '';
-                const examType = parts.slice(1).join('-') || (sub.replace('学科', '') || '单元测试');
-                examRecords.push({ date: date, timestamp: timestamp, subject: subject, examType: examType, score: Number(row.score) || 0, stars: amount, photo: '' });
-            } else if (type === 'assessment') {
-                assessmentRecords[taskName || label] = { date: date, score: 0, stars: amount, details: [], wrongQuestions: [] };
-            } else if (type === 'award') {
-                const parts = (taskName || label || '').split('-');
-                const subject = parts[0] || '';
-                const awardLevel = parts.slice(1).join('-') || '一等奖';
-                awardRecords.push({ date: date, timestamp: timestamp, subject: subject, awardLevel: awardLevel, desc: '', stars: amount, photo: '' });
-            }
-        });
-
-        // 重算余额（按导入顺序累加）
-        let bal = 0;
-        ledger.forEach(e => { bal += e.amount; e.balance = bal; });
-        data.stars = bal;
-
-        // 重建今日兑换次数统计
-        const todayExchangeCount = {};
-        exchangeRecords.forEach(r => {
-            if (!todayExchangeCount[r.date]) todayExchangeCount[r.date] = {};
-            todayExchangeCount[r.date][r.productName] = (todayExchangeCount[r.date][r.productName] || 0) + 1;
-        });
-
-        data.starLedger = ledger;
-        data.exchangeRecords = exchangeRecords;
-        data.checkinRecords = checkinRecords;
-        data.examRecords = examRecords;
-        data.assessmentRecords = assessmentRecords;
-        data.awardRecords = awardRecords;
-        data.todayExchangeCount = todayExchangeCount;
-
-        const saved = this.saveDB(db);
-        return { success: saved };
     }
 };
 
