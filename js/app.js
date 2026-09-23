@@ -728,7 +728,7 @@ const App = {
             { id: 'mathAdd', icon: '➕', name: '100以内加减法', desc: '加减法算式' },
             { id: 'engVocab', icon: '📚', name: '英语背单词', desc: '英语单词' },
             { id: 'engRead', icon: '🗣️', name: '英语短句跟读', desc: '朗读评分' },
-            { id: 'engUnitTest', icon: '📝', name: '英语单元测试', desc: '二上 Unit 1-6' },
+            { id: 'engUnitTest', icon: '📝', name: '英语单元测试', desc: '随机10题·每题2次机会' },
             { id: 'idiom', icon: '📖', name: '成语小测验', desc: '成语释义' },
             { id: 'sentenceMake', icon: '💬', name: '看词造句', desc: '每天5题，用词造句' },
             { id: 'mathMul', icon: '✖️', name: '数学乘法测试', desc: '个位数乘法' },
@@ -921,47 +921,48 @@ const App = {
     },
 
     genEngExamU1Quiz() {
-        // 按原卷顺序，固定 26 题
-        return [...ENGLISH_EXAM_U1].map(q => ({ ...q, inputType: q.type === 'engExamText' ? 'text' : 'choice' }));
+        // 英语单元测试新模式：从题库随机抽 10 题（选择题/判断题/看图题）
+        // 每题 10 分：首次答对 10 分，重试答对 5 分（由 answerCorrect 按 points 计算）
+        const pool = (typeof ENGLISH_EXAM_BANK !== 'undefined' ? ENGLISH_EXAM_BANK : []).slice();
+        // 洗牌
+        for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+        }
+        return pool.slice(0, 10).map(q => {
+            const opts = q.options.slice();
+            for (let i = opts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const t = opts[i]; opts[i] = opts[j]; opts[j] = t;
+            }
+            return { ...q, options: opts, inputType: 'choice', points: 10 };
+        });
     },
 
     renderEngUnitTestHome() {
-        const units = [
-            { id: 'U1', label: '二上 Unit 1', ready: true },
-            { id: 'U2', label: '二上 Unit 2', ready: false },
-            { id: 'U3', label: '二上 Unit 3', ready: false },
-            { id: 'U4', label: '二上 Unit 4', ready: false },
-            { id: 'U5', label: '二上 Unit 5', ready: false },
-            { id: 'U6', label: '二上 Unit 6', ready: false }
-        ];
+        const type = 'engExamU1';
+        const done = Storage.hasAssessedToday(null, type);
 
-        let html = `<h1 class="page-title">📝 英语单元测试</h1>
-            <div class="assessment-grid">`;
-
-        units.forEach(u => {
-            html += `<div class="assessment-card ${u.ready ? '' : 'disabled'}" data-unit="${u.id}">
-                <div class="assess-icon">📝</div>
-                <div class="assess-name">${u.label}</div>
-                <div class="assess-desc">${u.ready ? '开始测试' : '暂无题目，后续补充'}</div>
+        const html = `<h1 class="page-title">📝 英语单元测试</h1>
+            <div style="margin-bottom:10px;font-size:13px;color:#666;line-height:1.7;">
+                从全部题库（一上~二上 Unit1）中随机抽取 <b>10 题</b> 考核。<br>
+                每题 <b>2 次</b>答题机会：第一次答对 <b>10 分</b>，第二次答对 <b>5 分</b>。<br>
+                满分 100 分（3 星）｜90-99 分（2 星）｜其余（1 星）。
+            </div>
+            <div class="assessment-grid">
+                <div class="assessment-card ${done ? 'disabled' : ''}" id="engUnitTestStart">
+                    <div class="assess-icon">📝</div>
+                    <div class="assess-name">开始测试</div>
+                    <div class="assess-desc">${done ? '今日已完成，明天再来' : '随机 10 题'}</div>
+                </div>
             </div>`;
-        });
 
-        html += `</div>`;
         document.getElementById('main-content').innerHTML = html;
 
-        document.querySelectorAll('.assessment-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const unit = card.dataset.unit;
-                if (unit === 'U1') {
-                    const type = 'engExamU1';
-                    if (Storage.hasAssessedToday(null, type)) {
-                        this.showToast('今日测试次数已用完，明天再来练习。');
-                        return;
-                    }
-                    this.startAssessment(type);
-                }
-            });
-        });
+        const startCard = document.getElementById('engUnitTestStart');
+        if (startCard && !done) {
+            startCard.addEventListener('click', () => this.startAssessment(type));
+        }
     },
 
     genIdiomQuiz() {
@@ -1144,6 +1145,15 @@ const App = {
                     TTS.speakEnglish(question.question.en, 0.5);
                 };
                 document.getElementById('recordBtn').onclick = () => this.handleReading(question);
+                break;
+
+            case 'choice':
+            case 'tf':
+                container.innerHTML = `
+                    <div class="quiz-exam-question">${this.esc(question.question)}</div>
+                    <div class="quiz-options quiz-options-abcd" id="quizOptions"></div>
+                `;
+                this.renderEngExamOptions(question);
                 break;
 
             case 'engExamImg':
