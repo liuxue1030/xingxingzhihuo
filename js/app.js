@@ -5497,7 +5497,7 @@ const App = {
         const subjects = ['语文', '数学', '英语', '其他'];
         const awards = [
             { key: '一等奖', stars: 100 },
-            { key: '二等奖', stars: 50 },
+            { key: '二等奖', stars: 70 },
             { key: '三等奖', stars: 30 }
         ];
 
@@ -5604,7 +5604,7 @@ const App = {
         });
 
         document.getElementById('submitAward').onclick = () => {
-            const stars = ({ '一等奖': 100, '二等奖': 50, '三等奖': 30 })[selectedLevel] || 0;
+            const stars = ({ '一等奖': 100, '二等奖': 70, '三等奖': 30 })[selectedLevel] || 0;
             const desc = (document.getElementById('awardDesc').value || '').trim();
             const ok = Storage.saveAwardRecord(null, {
                 subject: selectedSubject,
