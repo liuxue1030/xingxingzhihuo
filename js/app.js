@@ -2668,6 +2668,7 @@ const App = {
             { id: 'engTextbook', icon: '📘', name: '英语课文二上' },
             { id: 'cnTextbook', icon: '📕', name: '语文课文二上' },
             { id: 'shengzi', icon: '📚', name: '语文生字' },
+            { id: 'chess', icon: '♟️', name: '国际象棋' },
             { id: 'focus', icon: '🧘', name: '专注力训练' },
             { id: 'idioms', icon: '📚', name: '成语故事' },
             { id: 'poems', icon: '📜', name: '小学生古诗75首' },
@@ -2682,7 +2683,6 @@ const App = {
             { id: 'worldHistory', icon: '🌍', name: '世界上下五千年' },
             { id: 'chinaHistory', icon: '🏛️', name: '中华上下五千年' },
             { id: 'scienceBoost', icon: '🔬', name: '科学充电站' },
-            { id: 'chess', icon: '♟️', name: '国际象棋' },
             { id: 'errorBook', icon: '📝', name: '错题本' }
         ];
 
