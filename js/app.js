@@ -931,9 +931,11 @@ const App = {
         }
         return pool.slice(0, 10).map(q => {
             const opts = q.options.slice();
-            for (let i = opts.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                const t = opts[i]; opts[i] = opts[j]; opts[j] = t;
+            if (!q.noShuffle) {
+                for (let i = opts.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    const t = opts[i]; opts[i] = opts[j]; opts[j] = t;
+                }
             }
             return { ...q, options: opts, inputType: 'choice', points: 10 };
         });
@@ -945,7 +947,7 @@ const App = {
 
         const html = `<h1 class="page-title">📝 英语单元测试</h1>
             <div style="margin-bottom:10px;font-size:13px;color:#666;line-height:1.7;">
-                从全部题库（一上~二上 Unit1）中随机抽取 <b>10 题</b> 考核。<br>
+                从题库（选择/判断题，部分含图片）中随机抽取 <b>10 题</b> 考核。<br>
                 每题 <b>2 次</b>答题机会：第一次答对 <b>10 分</b>，第二次答对 <b>5 分</b>。<br>
                 满分 100 分（3 星）｜90-99 分（2 星）｜其余（1 星）。
             </div>
