@@ -743,7 +743,7 @@ const App = {
             <div class="assessment-grid">`;
 
         assessments.forEach(a => {
-            const done = Storage.hasAssessedToday(null, a.id);
+            const done = Storage.hasAssessedToday(null, a.id === 'engUnitTest' ? 'engExamU1' : a.id);
             html += `<div class="assessment-card ${done ? 'disabled' : ''}" data-assess="${a.id}">
                 <div class="assess-icon">${a.icon}</div>
                 <div class="assess-name">${a.name}</div>
@@ -762,7 +762,7 @@ const App = {
                     return;
                 }
                 if (id === 'engUnitTest') {
-                    if (card.classList.contains('disabled')) {
+                    if (Storage.hasAssessedToday(null, 'engExamU1')) {
                         this.showToast('今日测试次数已用完，明天再来练习。');
                         return;
                     }
