@@ -2078,4 +2078,85 @@ const ENGLISH_EXAM_BANK = [
     ],
     "answer": "Let’s look for him!",
     "points": 10
-}];
+},
+    {
+    "unit": "五感",
+    "type": "choice",
+    "question": "我们用哪个身体部位“看”？",
+    "options": ["eyes", "ears", "nose"],
+    "answer": "eyes",
+    "points": 10
+},
+    {
+    "unit": "五感",
+    "type": "choice",
+    "question": "我们用哪个身体部位“听”？",
+    "options": ["eyes", "ears", "tongue"],
+    "answer": "ears",
+    "points": 10
+},
+    {
+    "unit": "五感",
+    "type": "choice",
+    "question": "我们用哪个身体部位“闻”？",
+    "options": ["hands", "nose", "ears"],
+    "answer": "nose",
+    "points": 10
+},
+    {
+    "unit": "五感",
+    "type": "choice",
+    "question": "我们用哪个身体部位“尝”？",
+    "options": ["tongue", "fingers", "eyes"],
+    "answer": "tongue",
+    "points": 10
+},
+    {
+    "unit": "五感",
+    "type": "choice",
+    "question": "我们用哪个身体部位“触摸和感觉”？",
+    "options": ["nose", "ears", "hands and fingers"],
+    "answer": "hands and fingers",
+    "points": 10
+},
+    {
+    "unit": "五感",
+    "type": "choice",
+    "question": "“我能看见一只猫。”应该说：",
+    "options": ["I can hear a cat.", "I can see a cat.", "I can smell a cat."],
+    "answer": "I can see a cat.",
+    "points": 10
+},
+    {
+    "unit": "五感",
+    "type": "choice",
+    "question": "“我能闻到花香。”应该说：",
+    "options": ["I can taste the flowers.", "I can see the flowers.", "I can smell the flowers."],
+    "answer": "I can smell the flowers.",
+    "points": 10
+},
+    {
+    "unit": "五感",
+    "type": "choice",
+    "question": "“我能尝到苹果的味道。”应该说：",
+    "options": ["I can taste the apples.", "I can feel the apples.", "I can hear the apples."],
+    "answer": "I can taste the apples.",
+    "points": 10
+},
+    {
+    "unit": "五感",
+    "type": "choice",
+    "question": "“我能感受到风。”应该说：",
+    "options": ["I can see the wind.", "I can feel the wind.", "I can taste the wind."],
+    "answer": "I can feel the wind.",
+    "points": 10
+},
+    {
+    "unit": "五感",
+    "type": "choice",
+    "question": "“我能听到鸟叫。”应该说：",
+    "options": ["I can hear the birds.", "I can see the birds.", "I can smell the birds."],
+    "answer": "I can hear the birds.",
+    "points": 10
+}
+];
