@@ -728,7 +728,7 @@ const App = {
             { id: 'mathAdd', icon: '➕', name: '100以内加减法', desc: '加减法算式' },
             { id: 'engVocab', icon: '📚', name: '英语背单词', desc: '英语单词' },
             { id: 'engRead', icon: '🗣️', name: '英语短句跟读', desc: '朗读评分' },
-            { id: 'engUnitTest', icon: '📝', name: '英语单元测试', desc: '随机10题·每题2次机会' },
+            { id: 'engUnitTest', icon: '📝', name: '英语课本测试', desc: '随机10题·每题2次机会' },
             { id: 'idiom', icon: '📖', name: '成语小测验', desc: '成语释义' },
             { id: 'sentenceMake', icon: '💬', name: '看词造句', desc: '每天5题，用词造句' },
             { id: 'mathMul', icon: '✖️', name: '数学乘法测试', desc: '个位数乘法' },
@@ -762,7 +762,11 @@ const App = {
                     return;
                 }
                 if (id === 'engUnitTest') {
-                    this.navigateSub(() => this.renderEngUnitTestHome());
+                    if (card.classList.contains('disabled')) {
+                        this.showToast('今日测试次数已用完，明天再来练习。');
+                        return;
+                    }
+                    this.navigateSub(() => this.startAssessment('engExamU1'));
                     return;
                 }
                 if (card.classList.contains('disabled')) {
@@ -921,7 +925,7 @@ const App = {
     },
 
     genEngExamU1Quiz() {
-        // 英语单元测试新模式：从题库随机抽 10 题（选择题/判断题/看图题）
+        // 英语课本测试新模式：从题库随机抽 10 题（选择题/判断题/看图题）
         // 每题 10 分：首次答对 10 分，重试答对 5 分（由 answerCorrect 按 points 计算）
         const pool = (typeof ENGLISH_EXAM_BANK !== 'undefined' ? ENGLISH_EXAM_BANK : []).slice();
         // 洗牌
@@ -941,31 +945,7 @@ const App = {
         });
     },
 
-    renderEngUnitTestHome() {
-        const type = 'engExamU1';
-        const done = Storage.hasAssessedToday(null, type);
-
-        const html = `<h1 class="page-title">📝 英语单元测试</h1>
-            <div style="margin-bottom:10px;font-size:13px;color:#666;line-height:1.7;">
-                从题库（选择/判断题，部分含图片）中随机抽取 <b>10 题</b> 考核。<br>
-                每题 <b>2 次</b>答题机会：第一次答对 <b>10 分</b>，第二次答对 <b>5 分</b>。<br>
-                满分 100 分（3 星）｜90-99 分（2 星）｜其余（1 星）。
-            </div>
-            <div class="assessment-grid">
-                <div class="assessment-card ${done ? 'disabled' : ''}" id="engUnitTestStart">
-                    <div class="assess-icon">📝</div>
-                    <div class="assess-name">开始测试</div>
-                    <div class="assess-desc">${done ? '今日已完成，明天再来' : '随机 10 题'}</div>
-                </div>
-            </div>`;
-
-        document.getElementById('main-content').innerHTML = html;
-
-        const startCard = document.getElementById('engUnitTestStart');
-        if (startCard && !done) {
-            startCard.addEventListener('click', () => this.startAssessment(type));
-        }
-    },
+    // 英语课本测试：点击菜单直接进入 startAssessment('engExamU1')，不再有中间主页
 
     genIdiomQuiz() {
         const shuffled = [...IDIOM_DATA].sort(() => Math.random() - 0.5).slice(0, 10);
@@ -5534,7 +5514,7 @@ const App = {
                     <input type="text" class="form-input" id="awardDesc" placeholder="如：校运会跳绳比赛">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">上传获奖照片/证书（选填）</label>
+                    <label class="form-label">上传获奖照片/证书</label>
                     <input type="file" accept="image/*" id="awardPhoto" style="min-height:48px;font-size:16px;">
                 </div>
                 <button class="btn btn-primary btn-block" id="submitAward" style="min-height:40px;font-size:15px;padding:8px;">提交并领取星星</button>
@@ -5618,6 +5598,10 @@ const App = {
         document.getElementById('submitAward').onclick = () => {
             const stars = ({ '一等奖': 100, '二等奖': 70, '三等奖': 30 })[selectedLevel] || 0;
             const desc = (document.getElementById('awardDesc').value || '').trim();
+            if (!photoData) {
+                this.showToast('请上传获奖照片/证书');
+                return;
+            }
             const ok = Storage.saveAwardRecord(null, {
                 subject: selectedSubject,
                 awardLevel: selectedLevel,
