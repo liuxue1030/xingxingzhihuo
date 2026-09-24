@@ -1718,4 +1718,364 @@ const ENGLISH_EXAM_BANK = [
         "answer": "tree",
         "points": 10
     }
-];
+,
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“uncle”的意思是“阿姨”。",
+    "options": [
+        "√",
+        "×"
+    ],
+    "answer": "×",
+    "noShuffle": true,
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“aunt”的意思是“姑姑；姨母；伯母；婶婶；舅母”。",
+    "options": [
+        "√",
+        "×"
+    ],
+    "answer": "√",
+    "noShuffle": true,
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“cousin”只能表示“堂兄”，不能表示“表弟”。",
+    "options": [
+        "√",
+        "×"
+    ],
+    "answer": "×",
+    "noShuffle": true,
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“old”的意思是“年轻的”。",
+    "options": [
+        "√",
+        "×"
+    ],
+    "answer": "×",
+    "noShuffle": true,
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“young”的意思是“年轻的”。",
+    "options": [
+        "√",
+        "×"
+    ],
+    "answer": "√",
+    "noShuffle": true,
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“Who is he?”的意思是“她是谁？”。",
+    "options": [
+        "√",
+        "×"
+    ],
+    "answer": "×",
+    "noShuffle": true,
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“He’s my cousin, Henry.”的意思是“他是我的表弟亨利。”。",
+    "options": [
+        "√",
+        "×"
+    ],
+    "answer": "√",
+    "noShuffle": true,
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“Is she your sister?”的意思是“她是你的姐姐/妹妹吗？”。",
+    "options": [
+        "√",
+        "×"
+    ],
+    "answer": "√",
+    "noShuffle": true,
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“No. She’s Henry’s sister, Ann.”的意思是“不，她是亨利的妹妹安。”。",
+    "options": [
+        "√",
+        "×"
+    ],
+    "answer": "√",
+    "noShuffle": true,
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“This party is great!”的意思是“这场聚会太糟糕了！”。",
+    "options": [
+        "√",
+        "×"
+    ],
+    "answer": "×",
+    "noShuffle": true,
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "你想问“他是谁？”，应该说：",
+    "options": [
+        "Who is she?",
+        "Who is he?",
+        "Is he your uncle?"
+    ],
+    "answer": "Who is he?",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“他是我的表弟亨利。”应该说：",
+    "options": [
+        "He’s my cousin, Henry.",
+        "She’s my cousin, Henry.",
+        "He’s my uncle, Henry."
+    ],
+    "answer": "He’s my cousin, Henry.",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "你想问“她是你的妹妹吗？”，应该说：",
+    "options": [
+        "Is he your brother?",
+        "Is she your sister?",
+        "Is that your aunt?"
+    ],
+    "answer": "Is she your sister?",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“不，她是亨利的妹妹安。”应该说：",
+    "options": [
+        "No. She’s Henry’s sister, Ann.",
+        "Yes. She’s Henry’s sister, Ann.",
+        "No. He’s Henry’s brother, Ann."
+    ],
+    "answer": "No. She’s Henry’s sister, Ann.",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“那是你的叔叔吗？”应该说：",
+    "options": [
+        "Is that your uncle?",
+        "Is that your aunt?",
+        "Is this your cousin?"
+    ],
+    "answer": "Is that your uncle?",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“鲍勃叔叔在哪里？我们去找他吧！”应该说：",
+    "options": [
+        "Where’s Uncle Bob? Let’s look for him!",
+        "Who’s Uncle Bob? Let’s look at him!",
+        "Where’s Uncle Bob? Let’s look at him!"
+    ],
+    "answer": "Where’s Uncle Bob? Let’s look for him!",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“你好，鲍勃叔叔。这场聚会太棒了！”应该说：",
+    "options": [
+        "Hello, Uncle Bob. This party is great!",
+        "Hello, Aunt Bob. This party is great!",
+        "Hello, Uncle Bob. This family is great!"
+    ],
+    "answer": "Hello, Uncle Bob. This party is great!",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“他很高。”应该说：",
+    "options": [
+        "He’s tall.",
+        "She’s tall.",
+        "He’s short."
+    ],
+    "answer": "He’s tall.",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "妈妈的姐妹，我们叫她：",
+    "options": [
+        "uncle",
+        "aunt",
+        "cousin"
+    ],
+    "answer": "aunt",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "爸爸的兄弟，我们叫他：",
+    "options": [
+        "uncle",
+        "aunt",
+        "sister"
+    ],
+    "answer": "uncle",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“堂/表兄弟姐妹”用英语怎么说？",
+    "options": [
+        "brother",
+        "sister",
+        "cousin"
+    ],
+    "answer": "cousin",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“年纪大的”用英语怎么说？",
+    "options": [
+        "young",
+        "old",
+        "cute"
+    ],
+    "answer": "old",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“可爱的”用英语怎么说？",
+    "options": [
+        "old",
+        "young",
+        "cute"
+    ],
+    "answer": "cute",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“聚会”用英语怎么说？",
+    "options": [
+        "family",
+        "party",
+        "fun"
+    ],
+    "answer": "party",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "“淘气的”用英语怎么说？",
+    "options": [
+        "great",
+        "fun",
+        "naughty"
+    ],
+    "answer": "naughty",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "你想问朋友“她是谁？”，应该说：",
+    "options": [
+        "Who is he?",
+        "Who is she?",
+        "Is she your aunt?"
+    ],
+    "answer": "Who is she?",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "你想告诉别人“她是我的阿姨。”，应该说：",
+    "options": [
+        "He’s my uncle.",
+        "She’s my aunt.",
+        "She’s my cousin."
+    ],
+    "answer": "She’s my aunt.",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "你想问“那是你的叔叔吗？”，应该说：",
+    "options": [
+        "Is that your uncle?",
+        "Is that your aunt?",
+        "Is this your cousin?"
+    ],
+    "answer": "Is that your uncle?",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "你想说“他年轻又可爱。”，应该说：",
+    "options": [
+        "He’s old and cute.",
+        "He’s young and cute.",
+        "She’s young and cute."
+    ],
+    "answer": "He’s young and cute.",
+    "points": 10
+},
+    {
+    "unit": "家庭与称谓",
+    "type": "choice",
+    "question": "你想说“我们去找他吧！”，应该说：",
+    "options": [
+        "Let’s look for him!",
+        "Let’s look at him!",
+        "Let’s look for her!"
+    ],
+    "answer": "Let’s look for him!",
+    "points": 10
+}];
