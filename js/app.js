@@ -784,7 +784,7 @@ const App = {
         const quizConfig = {
             pinyin: { name: '拼音测试', icon: '🔤', gen: () => this.genPinyinQuiz() },
             stroke: { name: '汉字笔顺测试', icon: '✍️', gen: () => this.genStrokeQuiz() },
-            mathAdd: { name: '100以内加减法', icon: '➕', gen: () => this.genMathAddQuiz(), timeLimit: 30 },
+            mathAdd: { name: '100以内加减法', icon: '➕', gen: () => this.genMathAddQuiz(), timeLimit: 60 },
             engVocab: { name: '英语背单词', icon: '📚', gen: () => this.genEngVocabQuiz() },
             engRead: { name: '英语短句跟读', icon: '🗣️', gen: () => this.genEngReadQuiz() },
             engExamU1: { name: '英语课本测试', icon: '📝', gen: () => this.genEngExamU1Quiz() },
@@ -848,7 +848,7 @@ const App = {
                 <div class="quiz-container">
                     <h1 class="page-title text-center">⏰ 时间到！</h1>
                     <div class="quiz-result">
-                        <div style="font-size:18px;margin-bottom:16px;">30 秒内没有完成 10 道题<br>本次挑战失败</div>
+                        <div style="font-size:18px;margin-bottom:16px;">60 秒内没有完成 10 道题<br>本次挑战失败</div>
                         <button class="btn btn-primary btn-lg btn-block mt-16" onclick="App.startAssessment('mathAdd')">重新来</button>
                         <button class="btn btn-secondary btn-lg btn-block mt-16" onclick="App.navigate('assessment')">返回</button>
                     </div>
