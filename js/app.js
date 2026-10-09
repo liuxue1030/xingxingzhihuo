@@ -784,7 +784,7 @@ const App = {
         const quizConfig = {
             pinyin: { name: '拼音测试', icon: '🔤', gen: () => this.genPinyinQuiz() },
             stroke: { name: '汉字笔顺测试', icon: '✍️', gen: () => this.genStrokeQuiz() },
-            mathAdd: { name: '100以内加减法', icon: '➕', gen: () => this.genMathAddQuiz() },
+            mathAdd: { name: '100以内加减法', icon: '➕', gen: () => this.genMathAddQuiz(), timeLimit: 30 },
             engVocab: { name: '英语背单词', icon: '📚', gen: () => this.genEngVocabQuiz() },
             engRead: { name: '英语短句跟读', icon: '🗣️', gen: () => this.genEngReadQuiz() },
             engExamU1: { name: '英语课本测试', icon: '📝', gen: () => this.genEngExamU1Quiz() },
@@ -813,7 +813,47 @@ const App = {
 
         this.currentQuiz.maxScore = this.currentQuiz.questions.reduce((sum, q) => sum + (q.points || 10), 0);
 
+        if (config.timeLimit) {
+            this.currentQuiz.timeLeft = config.timeLimit;
+            this.startQuizTimer();
+        }
+
         this.renderQuizQuestion();
+    },
+
+    startQuizTimer() {
+        this.clearQuizTimer();
+        this._quizTimer = setInterval(() => {
+            const q = this.currentQuiz;
+            if (!q || q.type !== 'mathAdd') { this.clearQuizTimer(); return; }
+            q.timeLeft--;
+            const el = document.getElementById('quizTimer');
+            if (el) el.textContent = '⏱ ' + q.timeLeft + 's';
+            if (q.timeLeft <= 0) {
+                this.clearQuizTimer();
+                this.quizTimeout();
+            }
+        }, 1000);
+    },
+
+    clearQuizTimer() {
+        if (this._quizTimer) { clearInterval(this._quizTimer); this._quizTimer = null; }
+    },
+
+    quizTimeout() {
+        this.currentQuiz = null;
+        this.subPageStack = [];
+        this.navigateSub(() => {
+            document.getElementById('main-content').innerHTML = `
+                <div class="quiz-container">
+                    <h1 class="page-title text-center">⏰ 时间到！</h1>
+                    <div class="quiz-result">
+                        <div style="font-size:18px;margin-bottom:16px;">30 秒内没有完成 10 道题<br>本次挑战失败</div>
+                        <button class="btn btn-primary btn-lg btn-block mt-16" onclick="App.startAssessment('mathAdd')">重新来</button>
+                        <button class="btn btn-secondary btn-lg btn-block mt-16" onclick="App.navigate('assessment')">返回</button>
+                    </div>
+                </div>`;
+        });
     },
 
     genPinyinQuiz() {
@@ -984,6 +1024,7 @@ const App = {
                 <div class="quiz-header">
                     <span class="quiz-progress">第 ${idx + 1} / ${total} 题</span>
                     <span class="quiz-score">得分: ${q.score}</span>
+                    ${q.timeLeft !== undefined ? `<span class="quiz-timer" id="quizTimer" style="color:#e53935;font-weight:bold;">⏱ ${q.timeLeft}s</span>` : ''}
                 </div>
                 <div class="quiz-question" id="quizQuestion"></div>
                 <div class="quiz-feedback" id="quizFeedback"></div>
@@ -2037,6 +2078,7 @@ const App = {
 
     showQuizResult() {
         const q = this.currentQuiz;
+        this.clearQuizTimer();
         this.currentQuiz = null; // 清除测评状态，结果页返回正常
         const maxScore = q.maxScore || (q.questions.length * 10);
         const score = q.score;
