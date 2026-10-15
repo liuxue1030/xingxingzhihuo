@@ -738,7 +738,10 @@ const App = {
 
         let html = `<h1 class="page-title">📝 知识测评</h1>
             <div style="margin-bottom:8px;font-size:12px;color:#666;line-height:1.6;">
-                100分：3颗星 &nbsp;&nbsp; 90-99分：2颗星 &nbsp;&nbsp; 90分以下：1颗星
+                ${(() => {
+                    const r = (Storage.getDB().globalConfig.rewardRules || {}).assessment || { threeStar: 2, twoStar: 1, oneStar: 0 };
+                    return `100分：${r.threeStar}颗星 &nbsp;&nbsp; 90-99分：${r.twoStar}颗星 &nbsp;&nbsp; 90分以下：${r.oneStar}颗星`;
+                })()}
             </div>
             <div class="assessment-grid">`;
 
