@@ -1931,47 +1931,47 @@ ________，雨不停地下着。
 const DEFAULT_CHECKIN_CATEGORIES = [
     {
         name: "语文", icon: "📖", items: [
-            { name: "课外阅读", stars: 2 },
-            { name: "课后作业", stars: 3 },
-            { name: "做一套试卷", stars: 5 },
-            { name: "汉字字帖", stars: 2 },
-            { name: "听写全对", stars: 2 }
+            { name: "课外阅读", stars: 1 },
+            { name: "课后作业", stars: 1 },
+            { name: "做一套试卷", stars: 3 },
+            { name: "汉字字帖", stars: 1 },
+            { name: "听写全对", stars: 1 }
         ]
     },
     {
         name: "英语", icon: "🔤", items: [
-            { name: "课后作业", stars: 3 },
-            { name: "英语绘本5本", stars: 3 },
-            { name: "做一套试卷", stars: 5 },
-            { name: "英文字帖", stars: 2 },
-            { name: "一起作业APP", stars: 2 }
+            { name: "课后作业", stars: 1 },
+            { name: "英语绘本5本", stars: 2 },
+            { name: "做一套试卷", stars: 3 },
+            { name: "英文字帖", stars: 1 },
+            { name: "一起作业APP", stars: 1 }
         ]
     },
     {
         name: "数学", icon: "🔢", items: [
-            { name: "课后作业", stars: 3 },
-            { name: "做一套试卷", stars: 5 }
+            { name: "课后作业", stars: 1 },
+            { name: "做一套试卷", stars: 3 }
         ]
     },
     {
         name: "运动", icon: "⚽", items: [
-            { name: "吊杠", stars: 2 },
-            { name: "跳绳", stars: 2 },
-            { name: "滑轮", stars: 2 },
-            { name: "羽毛球", stars: 3 },
-            { name: "跑步", stars: 2 },
-            { name: "篮球", stars: 3 },
-            { name: "游泳", stars: 2 },
-            { name: "仰卧起坐", stars: 2 },
-            { name: "平板支撑", stars: 2 },
-            { name: "俯卧撑", stars: 2 }
+            { name: "吊杠", stars: 1 },
+            { name: "跳绳", stars: 1 },
+            { name: "滑轮", stars: 1 },
+            { name: "羽毛球", stars: 1 },
+            { name: "跑步", stars: 1 },
+            { name: "篮球", stars: 1 },
+            { name: "游泳", stars: 1 },
+            { name: "仰卧起坐", stars: 1 },
+            { name: "平板支撑", stars: 1 },
+            { name: "俯卧撑", stars: 1 }
         ]
     },
     {
         name: "家务", icon: "🏠", items: [
             { name: "扔垃圾", stars: 1 },
-            { name: "扫地", stars: 2 },
-            { name: "洗碗", stars: 2 }
+            { name: "扫地", stars: 1 },
+            { name: "洗碗", stars: 1 }
         ]
     }
 ];
@@ -1979,9 +1979,9 @@ const DEFAULT_CHECKIN_CATEGORIES = [
 // ===== 默认奖励规则 =====
 const DEFAULT_REWARD_RULES = {
     assessment: {
-        threeStar: 3,   // 100分得3颗星
-        twoStar: 2,     // 90分得2颗星
-        oneStar: 1,     // 90分以下得1颗星
+        threeStar: 2,   // 100分得2颗星
+        twoStar: 1,     // 90-99分得1颗星
+        oneStar: 0,     // 90分以下得0颗星
         passLine: 90    // 合格线
     },
     exam: [

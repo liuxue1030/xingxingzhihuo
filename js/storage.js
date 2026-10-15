@@ -86,6 +86,14 @@ const Storage = {
                 }
             }
 
+            // 迁移：知识测评奖励规则统一为 100分→2颗 / 90-99分→1颗 / 90分以下→0颗（仅执行一次，不覆盖家长后续自定义）
+            if (!db.globalConfig.assessmentRuleMigratedV1) {
+                if (!db.globalConfig.rewardRules) db.globalConfig.rewardRules = {};
+                db.globalConfig.rewardRules.assessment = { threeStar: 2, twoStar: 1, oneStar: 0, passLine: 90 };
+                db.globalConfig.assessmentRuleMigratedV1 = true;
+                this.saveDB(db);
+            }
+
             // 迁移：为每个孩子的打卡分类补齐默认任务（按 分类名+任务名 去重，保留已有任务的星星数设置）
             if (db.childrenData) {
                 let checkinChanged = false;
@@ -123,6 +131,34 @@ const Storage = {
                     }
                 });
                 if (checkinChanged) this.saveDB(db);
+            }
+
+            // 迁移：打卡任务奖励星数按最新默认规则统一更新（仅执行一次；不影响已发放星星，也不覆盖家长后续自定义）
+            if (!db.globalConfig.checkinStarMigratedV1 && db.childrenData) {
+                const catStarMap = {};
+                DEFAULT_CHECKIN_CATEGORIES.forEach(dc => {
+                    catStarMap[dc.name] = {};
+                    dc.items.forEach(di => { catStarMap[dc.name][di.name] = di.stars; });
+                });
+                let starChanged = false;
+                Object.keys(db.childrenData).forEach(cid => {
+                    const cats = db.childrenData[cid].checkinCategories;
+                    if (!Array.isArray(cats)) return;
+                    cats.forEach(cat => {
+                        if (!Array.isArray(cat.items)) return;
+                        const sm = catStarMap[cat.name];
+                        if (!sm) return;
+                        cat.items.forEach(it => {
+                            if (sm[it.name] !== undefined && sm[it.name] !== it.stars) {
+                                it.stars = sm[it.name];
+                                starChanged = true;
+                            }
+                        });
+                    });
+                });
+                if (starChanged) this.saveDB(db);
+                db.globalConfig.checkinStarMigratedV1 = true;
+                this.saveDB(db);
             }
         }
         return db;
