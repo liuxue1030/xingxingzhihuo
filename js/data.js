@@ -1964,7 +1964,9 @@ const DEFAULT_CHECKIN_CATEGORIES = [
             { name: "游泳", stars: 1 },
             { name: "仰卧起坐", stars: 1 },
             { name: "平板支撑", stars: 1 },
-            { name: "俯卧撑", stars: 1 }
+            { name: "俯卧撑", stars: 1 },
+            { name: "坐位体前屈", stars: 1 },
+            { name: "肺活量", stars: 1 }
         ]
     },
     {
