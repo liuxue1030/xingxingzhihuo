@@ -5701,11 +5701,11 @@ const App = {
             <div class="exam-form">
                 <div class="form-group">
                     <label class="form-label">1. 犯了什么错（必填）</label>
-                    <textarea class="form-input" id="reflectMistake" rows="3" placeholder="说清楚事情的经过：我做错了什么？" style="min-height:88px;padding:10px;line-height:1.6;resize:vertical;"></textarea>
+                    <textarea class="form-input" id="reflectMistake" rows="3" placeholder="今天发生了什么事？我哪里做得不对？" style="min-height:88px;padding:10px;line-height:1.6;resize:vertical;"></textarea>
                 </div>
                 <div class="form-group">
                     <label class="form-label">2. 下次怎么改进（必填）</label>
-                    <textarea class="form-input" id="reflectImprove" rows="3" placeholder="下次遇到同样的情况，我打算怎么做？" style="min-height:88px;padding:10px;line-height:1.6;resize:vertical;"></textarea>
+                    <textarea class="form-input" id="reflectImprove" rows="3" placeholder="下次再遇到，我可以怎么做？" style="min-height:88px;padding:10px;line-height:1.6;resize:vertical;"></textarea>
                 </div>
                 <button class="btn btn-primary btn-block" id="submitReflection" style="min-height:40px;font-size:15px;padding:8px;">提交并领取 ${stars} 颗星</button>
             </div>`;
