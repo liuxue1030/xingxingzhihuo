@@ -188,6 +188,7 @@ const App = {
             case 'tools': this.renderToolsList(); break;
             case 'exam': this.renderExam(); break;
             case 'award': this.renderAward(); break;
+            case 'reflection': this.renderReflection(); break;
             case 'mall': this.renderMall(); break;
             case 'focusTimer': this.renderFocusTimer(); break;
         }
@@ -5688,6 +5689,102 @@ const App = {
     },
 
     // ========================================================
+    // 模块：认错反省（每次 +10 星，两项内容必填，一天可多次提交）
+    // ========================================================
+    REFLECTION_STARS: 10,
+
+    renderReflection() {
+        const records = Storage.getReflectionRecords();
+        const stars = this.REFLECTION_STARS;
+
+        let html = `<h1 class="page-title">🙇 认错反省</h1>
+            <div class="exam-form">
+                <div class="form-group">
+                    <label class="form-label">1. 犯了什么错（必填）</label>
+                    <textarea class="form-input" id="reflectMistake" rows="3" placeholder="说清楚事情的经过：我做错了什么？" style="min-height:88px;padding:10px;line-height:1.6;resize:vertical;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">2. 下次怎么改进（必填）</label>
+                    <textarea class="form-input" id="reflectImprove" rows="3" placeholder="下次遇到同样的情况，我打算怎么做？" style="min-height:88px;padding:10px;line-height:1.6;resize:vertical;"></textarea>
+                </div>
+                <button class="btn btn-primary btn-block" id="submitReflection" style="min-height:40px;font-size:15px;padding:8px;">提交并领取 ${stars} 颗星</button>
+            </div>`;
+
+        html += `<div class="exam-history">
+            <h3 class="section-title">反省记录</h3>`;
+        if (records.length === 0) {
+            html += this.emptyState('🙇', '还没有反省记录');
+        } else {
+            records.slice().reverse().forEach((r, i) => {
+                html += `<div class="exam-history-item exam-record-clickable" id="reflectRecItem_${i}">
+                    <div style="min-width:0;flex:1;">
+                        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${this.escHtml(r.mistake)}</div>
+                        <div style="font-size:11px;color:#999;">${r.date}${r.time ? ' ' + r.time : ''}</div>
+                    </div>
+                    <div class="flex items-center gap-12">
+                        <span class="exam-star-badge">+${r.stars}⭐</span>
+                        <span style="font-size:18px;color:#bbb;">›</span>
+                    </div>
+                </div>`;
+            });
+        }
+        html += `</div>`;
+
+        document.getElementById('main-content').innerHTML = html;
+
+        records.slice().reverse().forEach((r, i) => {
+            const el = document.getElementById(`reflectRecItem_${i}`);
+            if (el) el.onclick = () => this.showReflectionDetail(r);
+        });
+
+        document.getElementById('submitReflection').onclick = () => {
+            const mistake = (document.getElementById('reflectMistake').value || '').trim();
+            const improve = (document.getElementById('reflectImprove').value || '').trim();
+            if (!mistake) {
+                this.showToast('请填写「犯了什么错」');
+                return;
+            }
+            if (!improve) {
+                this.showToast('请填写「下次怎么改进」');
+                return;
+            }
+            const ok = Storage.saveReflectionRecord(null, {
+                mistake: mistake,
+                improve: improve,
+                stars: stars
+            });
+            if (ok === false) {
+                this.showToast('存储空间不足，请删除旧记录后再试');
+                return;
+            }
+            this.showStarAnimation();
+            this.updateSidebarInfo();
+            this.showToast(`提交成功！获得 ${stars} 颗星！`);
+            this.renderReflection();
+        };
+    },
+
+    showReflectionDetail(r) {
+        const bodyHtml = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:13px;">
+                <span style="color:#999;">${r.date}${r.time ? ' ' + r.time : ''}</span>
+                <span class="exam-star-badge">+${r.stars}⭐</span>
+            </div>
+            <div style="font-size:12px;color:#999;margin-bottom:4px;">1. 犯了什么错</div>
+            <div style="font-size:14px;color:#333;line-height:1.7;white-space:pre-wrap;margin-bottom:14px;">${this.escHtml(r.mistake)}</div>
+            <div style="font-size:12px;color:#999;margin-bottom:4px;">2. 下次怎么改进</div>
+            <div style="font-size:14px;color:#333;line-height:1.7;white-space:pre-wrap;">${this.escHtml(r.improve)}</div>
+        `;
+        this.showModal('🙇 反省详情', bodyHtml);
+    },
+
+    escHtml(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[c]);
+    },
+
+    // ========================================================
     // 模块：专注时间（倒计时）
     // ========================================================
     renderFocusTimer() {
@@ -6731,7 +6828,7 @@ const App = {
     // 完整数据导入（JSON恢复）：选择备份文件 → 解析 → 覆盖写入 → 刷新
     importDataForm() {
         this.showConfirm(
-            '导入将覆盖当前站点的数据（孩子信息、星星、打卡、补卡、测评、考试、获奖、错题本、兑换记录等）。确定继续吗？',
+            '导入将覆盖当前站点的数据（孩子信息、星星、打卡、补卡、测评、考试、获奖、认错反省、错题本、兑换记录等）。确定继续吗？',
             () => {
                 const input = document.createElement('input');
                 input.type = 'file';
@@ -6778,7 +6875,7 @@ const App = {
             <div style="font-size:15px;margin-bottom:10px;">请选择要导出的孩子：</div>
             <select id="exportChildSelect" class="form-input" style="width:100%;padding:10px;font-size:16px;border-radius:8px;">${options}</select>
             <div style="font-size:12px;color:#999;margin-top:10px;line-height:1.5;">
-                将导出该孩子全部的【星星明细】（含打卡、补卡、测评、考试、获奖、兑换，按模块分类、单 Sheet），不含孩子信息与余额；撤销/取消的记录不会包含在内。
+                将导出该孩子全部的【星星明细】（含打卡、补卡、测评、考试、获奖、认错反省、兑换，按模块分类、单 Sheet），不含孩子信息与余额；撤销/取消的记录不会包含在内。
             </div>`;
         const footer = `
             <button class="btn btn-outline" onclick="App.closeModal()">取消</button>

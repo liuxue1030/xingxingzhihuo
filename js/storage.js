@@ -9,6 +9,7 @@ const MODULE_MAP = {
     assessment: '知识测评',
     exam: '考试积星',
     award: '获奖积星',
+    reflection: '认错反省',
     exchange: '星星兑换商城'
 };
 
@@ -193,6 +194,7 @@ const Storage = {
             assessmentRecords: {},    // { 'pinyin': { date, score, stars, details, wrongQuestions } }
             examRecords: [],          // [{ date, subject, examType, score, stars, photo }]
             awardRecords: [],         // [{ date, subject, awardLevel, desc, stars, photo }]
+            reflectionRecords: [],    // [{ date, time, mistake, improve, stars }]
             examHistory: [],
             errorBook: [],           // [{ id, subject, question, wrongAnswer, correctAnswer, analysis, knowledgePoint, reason, difficulty, tags, createdAt, mastered }]
             exchangeRecords: [],      // [{ date, productName, cost }]
@@ -666,6 +668,39 @@ const Storage = {
         return data.awardRecords || [];
     },
 
+    // ===== 认错反省（每次固定 +N 星，一天可多次提交） =====
+    saveReflectionRecord(childId, record) {
+        const data = this.getChildData(childId);
+        if (!Array.isArray(data.reflectionRecords)) data.reflectionRecords = [];
+        const now = new Date();
+        const p = n => String(n).padStart(2, '0');
+        record.date = this.todayStr();
+        record.time = `${p(now.getHours())}:${p(now.getMinutes())}`;
+        record.timestamp = Date.now();
+        data.reflectionRecords.push(record);
+
+        // 发放星星
+        if (record.stars > 0) {
+            data.stars += record.stars;
+            data.starLedger.push({
+                date: record.date,
+                timestamp: record.timestamp,
+                type: 'reflection',
+                label: '认错反省',
+                taskName: '认错反省',
+                amount: record.stars,
+                balance: data.stars
+            });
+        }
+
+        return this.saveChildData(childId, data);
+    },
+
+    getReflectionRecords(childId) {
+        const data = this.getChildData(childId);
+        return data.reflectionRecords || [];
+    },
+
     // ===== 错题本 =====
     getErrorBook(childId) {
         const data = this.getChildData(childId);
@@ -1090,7 +1125,8 @@ const Storage = {
             examRecords: data.examRecords,
             errorBook: data.errorBook,
             exchangeRecords: data.exchangeRecords,
-            awardRecords: data.awardRecords
+            awardRecords: data.awardRecords,
+            reflectionRecords: data.reflectionRecords
         };
     },
 
@@ -1136,6 +1172,8 @@ const Storage = {
                 if (!Array.isArray(cd.examRecords)) cd.examRecords = [];
                 if (!Array.isArray(cd.examHistory)) cd.examHistory = [];
                 if (!Array.isArray(cd.errorBook)) cd.errorBook = [];
+                if (!Array.isArray(cd.awardRecords)) cd.awardRecords = [];
+                if (!Array.isArray(cd.reflectionRecords)) cd.reflectionRecords = [];
                 if (!Array.isArray(cd.exchangeRecords)) cd.exchangeRecords = [];
                 if (!cd.todayExchangeCount) cd.todayExchangeCount = {};
                 if (!Array.isArray(cd.errorTags)) cd.errorTags = ['校内作业', '家庭练习', '单元试卷'];
@@ -1166,6 +1204,7 @@ const Storage = {
             if (Array.isArray(obj.errorBook)) data.errorBook = obj.errorBook;
             if (Array.isArray(obj.exchangeRecords)) data.exchangeRecords = obj.exchangeRecords;
             if (Array.isArray(obj.awardRecords)) data.awardRecords = obj.awardRecords;
+            if (Array.isArray(obj.reflectionRecords)) data.reflectionRecords = obj.reflectionRecords;
             if (obj.child.nickname) child.nickname = obj.child.nickname;
             if (obj.child.avatar) child.avatar = obj.child.avatar;
             db.childrenData[child.id] = data;
