@@ -112,6 +112,18 @@ const Storage = {
                         });
                     });
 
+                    // 迁移：补齐缺失的默认打卡分类（如新增的「睡眠」），按默认顺序插入到前一个默认分类之后
+                    DEFAULT_CHECKIN_CATEGORIES.forEach((dc, dcIdx) => {
+                        if (cats.find(c => c.name === dc.name)) return;
+                        let insertAt = cats.length;
+                        for (let k = dcIdx - 1; k >= 0; k--) {
+                            const prevIdx = cats.findIndex(c => c.name === DEFAULT_CHECKIN_CATEGORIES[k].name);
+                            if (prevIdx >= 0) { insertAt = prevIdx + 1; break; }
+                        }
+                        cats.splice(insertAt, 0, JSON.parse(JSON.stringify(dc)));
+                        checkinChanged = true;
+                    });
+
                     // 迁移：将运动分类的排序同步为默认顺序（保留用户自定义项在末尾）
                     const sportDefault = DEFAULT_CHECKIN_CATEGORIES.find(dc => dc.name === '运动');
                     const sportCat = cats.find(c => c.name === '运动');

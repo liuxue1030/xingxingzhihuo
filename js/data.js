@@ -1975,6 +1975,12 @@ const DEFAULT_CHECKIN_CATEGORIES = [
             { name: "扫地", stars: 1 },
             { name: "洗碗", stars: 1 }
         ]
+    },
+    {
+        name: "睡眠", icon: "😴", items: [
+            { name: "9点半前睡着", stars: 5 },
+            { name: "9点前睡着", stars: 10 }
+        ]
     }
 ];
 
