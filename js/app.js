@@ -871,9 +871,18 @@ const App = {
     },
 
     genStrokeQuiz() {
-        const chars = ['春','风','花','草','树','叶','鸟','虫','鱼','水','火','土','木','金','人','口','手','目','耳','足',
-                       '天','地','日','月','星','云','雨','雪','冰','山','河','海','林','石','光','明','暗','色','红','绿'];
-        const shuffled = chars.sort(() => Math.random() - 0.5).slice(0, 10);
+        // 字库：优先使用二年级上册写字表 250 字（secondGrade1Data.js 的 window.SG1_CHARS）
+        // 若字表未加载，退回内置常用 40 字
+        const fallback = ['春','风','花','草','树','叶','鸟','虫','鱼','水','火','土','木','金','人','口','手','目','耳','足',
+                          '天','地','日','月','星','云','雨','雪','冰','山','河','海','林','石','光','明','暗','色','红','绿'];
+        let pool = fallback;
+        if (Array.isArray(window.SG1_CHARS) && window.SG1_CHARS.length) {
+            const fromTable = window.SG1_CHARS.map(item => item && item.c).filter(Boolean);
+            if (fromTable.length) pool = fromTable;
+        }
+        // 去重后随机抽 10 个不重复的字
+        const unique = Array.from(new Set(pool));
+        const shuffled = unique.slice().sort(() => Math.random() - 0.5).slice(0, 10);
         return shuffled.map(ch => ({
             type: 'stroke',
             question: ch,
