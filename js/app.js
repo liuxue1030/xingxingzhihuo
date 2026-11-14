@@ -2218,6 +2218,8 @@ const App = {
     // 仅保留「困难」模式（简单/中等已移除）
     SUDOKU_DIFF: 'hard',
     // 成功提交后对应星星：四宫1 / 六宫2 / 九宫3
+    // 应用版本号（每次发布与 index.html 的 ?v= 一起更新，设置页可查看）
+    APP_VERSION: 'v102',
     SUDOKU_STARS: { 4: 1, 6: 2, 9: 3 },
     // 每日最多挑战次数（提交失败可重试，成功即止）
     SUDOKU_MAX_ATTEMPTS: 3,
@@ -6311,6 +6313,9 @@ const App = {
                 </div>
                 <div class="settings-item" onclick="App.showToast('全局离线缓存已启用：题库已本地缓存，无网络可完成测评、打卡')">
                     <span>💾 离线缓存状态</span><span style="color:#4CAF50;">已启用</span>
+                </div>
+                <div class="settings-item" onclick="App.showToast('若这里显示的版本不是最新，说明手机缓存了旧代码，请用带参数的完整链接重新打开一次')">
+                    <span>ℹ️ 当前版本</span><span style="color:#666;">${this.APP_VERSION}</span>
                 </div>
             </div>`;
 
