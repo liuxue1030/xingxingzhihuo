@@ -639,8 +639,7 @@ const Storage = {
             });
         }
 
-        this.saveChildData(childId, data);
-        return true;
+        return this.saveChildData(childId, data);
     },
 
     getExamRecords(childId) {
@@ -671,8 +670,7 @@ const Storage = {
             });
         }
 
-        this.saveChildData(childId, data);
-        return true;
+        return this.saveChildData(childId, data);
     },
 
     getAwardRecords(childId) {

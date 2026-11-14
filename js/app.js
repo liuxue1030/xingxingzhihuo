@@ -419,6 +419,51 @@ const App = {
         });
     },
 
+    // 把一张 base64 图片重新压小（失败时原样返回）
+    shrinkDataUrl(dataUrl, maxSide = 640, quality = 0.6) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+                let { width, height } = img;
+                if (width > height && width > maxSide) {
+                    height = Math.round(height * maxSide / width);
+                    width = maxSide;
+                } else if (height >= width && height > maxSide) {
+                    width = Math.round(width * maxSide / height);
+                    height = maxSide;
+                }
+                try {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                } catch (e) {
+                    resolve(dataUrl);
+                }
+            };
+            img.onerror = () => resolve(dataUrl);
+            img.src = dataUrl;
+        });
+    },
+
+    // 存储空间不足时的自救：把全部孩子的考试/获奖照片统一压小后重存
+    async shrinkStoredPhotos(maxSide = 640, quality = 0.6) {
+        const db = Storage.getDB();
+        if (!db || !db.childrenData) return false;
+        const recs = [];
+        Object.keys(db.childrenData).forEach(cid => {
+            const cd = db.childrenData[cid] || {};
+            (cd.examRecords || []).forEach(r => { if (r.photo) recs.push(r); });
+            (cd.awardRecords || []).forEach(r => { if (r.photo) recs.push(r); });
+        });
+        if (!recs.length) return false;
+        for (const r of recs) {
+            r.photo = await this.shrinkDataUrl(r.photo, maxSide, quality);
+        }
+        return Storage.saveDB(db);
+    },
+
     // 任务名翻译（处理历史数据中可能存在的英文id）
     translateTaskName(label, taskName) {
         if (label === '系统小测评' || label === '知识测评') {
@@ -5485,7 +5530,7 @@ const App = {
             this.showModal('💡 奖励规则', rulesHtml);
         });
 
-        document.getElementById('submitExam').onclick = () => {
+        document.getElementById('submitExam').onclick = async () => {
             const score = parseFloat(document.getElementById('examScore').value);
             if (isNaN(score) || score < 0 || score > 100) {
                 this.showToast('请输入有效分数(0-100)');
@@ -5497,15 +5542,27 @@ const App = {
             }
 
             const stars = Storage.calcExamStars(score);
-            const ok = Storage.saveExamRecord(null, {
+            const doSave = () => Storage.saveExamRecord(null, {
                 subject: selectedSubject,
                 examType: selectedType,
                 score: score,
                 stars: stars,
                 photo: photoData
             });
+            let ok = doSave();
             if (ok === false) {
-                this.showToast('存储空间不足，请删除旧考试记录后再试');
+                // localStorage 空间不足：自动压小历史照片后重试
+                this.showToast('存储空间不足，正在自动压缩历史照片…', 2000);
+                await this.shrinkStoredPhotos();
+                ok = doSave();
+                if (ok === false) {
+                    // 再把本次新照片压小后重试
+                    photoData = await this.shrinkDataUrl(photoData, 560, 0.55);
+                    ok = doSave();
+                }
+            }
+            if (ok === false) {
+                this.showToast('存储空间已满：请先在设置里导出备份，再删除部分旧考试/获奖记录');
                 return;
             }
 
@@ -5650,22 +5707,34 @@ const App = {
             this.showModal('💡 奖励规则', rulesHtml);
         });
 
-        document.getElementById('submitAward').onclick = () => {
+        document.getElementById('submitAward').onclick = async () => {
             const stars = ({ '一等奖': 100, '二等奖': 70, '三等奖': 30 })[selectedLevel] || 0;
             const desc = (document.getElementById('awardDesc').value || '').trim();
             if (!photoData) {
                 this.showToast('请上传获奖照片/证书');
                 return;
             }
-            const ok = Storage.saveAwardRecord(null, {
+            const doSave = () => Storage.saveAwardRecord(null, {
                 subject: selectedSubject,
                 awardLevel: selectedLevel,
                 desc: desc,
                 stars: stars,
                 photo: photoData
             });
+            let ok = doSave();
             if (ok === false) {
-                this.showToast('存储空间不足，请删除旧记录后再试');
+                // localStorage 空间不足：自动压小历史照片后重试
+                this.showToast('存储空间不足，正在自动压缩历史照片…', 2000);
+                await this.shrinkStoredPhotos();
+                ok = doSave();
+                if (ok === false) {
+                    // 再把本次新照片压小后重试
+                    photoData = await this.shrinkDataUrl(photoData, 560, 0.55);
+                    ok = doSave();
+                }
+            }
+            if (ok === false) {
+                this.showToast('存储空间已满：请先在设置里导出备份，再删除部分旧考试/获奖记录');
                 return;
             }
             this.showStarAnimation();
